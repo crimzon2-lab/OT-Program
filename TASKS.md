@@ -379,7 +379,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit && npx vitest run src/data/symbols.test.ts`
 
-### - [ ] Task 22: モジュール1（抹消課題）生成ロジック（`logic.ts`）の実装
+### - [x] Task 22: モジュール1（抹消課題）生成ロジック（`logic.ts`）の実装
 - **対象ファイルパス**:
   - `src/modules/attention/m01-cancellation/logic.ts`（新規）
 - **参照する型・仕様**:
@@ -398,7 +398,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit`
 
-### - [ ] Task 23: モジュール1（抹消課題）SVG 描画とモジュール定義の実装
+### - [x] Task 23: モジュール1（抹消課題）SVG 描画とモジュール定義の実装
 - **対象ファイルパス**:
   - `src/modules/attention/m01-cancellation/render.ts`（新規）
   - `src/modules/attention/m01-cancellation/index.ts`（新規）
@@ -414,7 +414,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit`
 
-### - [ ] Task 24: モジュール1（抹消課題）単体テストの実装
+### - [x] Task 24: モジュール1（抹消課題）単体テストの実装
 - **対象ファイルパス**:
   - `src/modules/attention/m01-cancellation/logic.test.ts`（新規）
 - **参照する型・仕様**:
