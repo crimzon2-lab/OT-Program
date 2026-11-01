@@ -12,7 +12,7 @@
 
 ## Phase 0：共通ユーティリティ・コア・印刷・UI 基盤（Task 01 〜 Task 20）
 
-### - [ ] Task 01: HTML / SVG 文字列ビルダとエスケープ処理の実装
+### - [x] Task 01: HTML / SVG 文字列ビルダとエスケープ処理の実装
 - **対象ファイルパス**:
   - `src/utils/html.ts`（新規）
   - `src/utils/svg.ts`（新規）
@@ -33,7 +33,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit && npx vitest run src/utils/svg.test.ts`
 
-### - [ ] Task 02: 日本語仮名分類・清音/濁音/半濁音/小書き文字の厳密判定ユーティリティ
+### - [x] Task 02: 日本語仮名分類・清音/濁音/半濁音/小書き文字の厳密判定ユーティリティ
 - **対象ファイルパス**:
   - `src/utils/kana.ts`（新規）
   - `src/utils/kana.test.ts`（新規）
@@ -51,7 +51,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit && npx vitest run src/utils/kana.test.ts`
 
-### - [ ] Task 03: 幾何計算・象限/3列集計ユーティリティの実装
+### - [x] Task 03: 幾何計算・象限/3列集計ユーティリティの実装
 - **対象ファイルパス**:
   - `src/utils/geometry.ts`（新規）
   - `src/utils/geometry.test.ts`（新規）
@@ -69,7 +69,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit && npx vitest run src/utils/geometry.test.ts`
 
-### - [ ] Task 04: 4象限層化サンプリング・最小距離配置・グリッド配置アルゴリズムの実装
+### - [x] Task 04: 4象限層化サンプリング・最小距離配置・グリッド配置アルゴリズムの実装
 - **対象ファイルパス**:
   - `src/utils/placement.ts`（新規）
   - `src/utils/placement.test.ts`（新規）
