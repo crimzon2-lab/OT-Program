@@ -86,7 +86,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit && npx vitest run src/utils/placement.test.ts`
 
-### - [ ] Task 05: Crockford's Base32 エンコーダ／デコーダおよびビットストリームの実装
+### - [x] Task 05: Crockford's Base32 エンコーダ／デコーダおよびビットストリームの実装
 - **対象ファイルパス**:
   - `src/utils/base32.ts`（新規）
   - `src/utils/base32.test.ts`（新規）
@@ -102,7 +102,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit && npx vitest run src/utils/base32.test.ts`
 
-### - [ ] Task 06: 共通パラメータ定義・デフォルト値生成・バリデーション・表示条件判定の実装
+### - [x] Task 06: 共通パラメータ定義・デフォルト値生成・バリデーション・表示条件判定の実装
 - **対象ファイルパス**:
   - `src/core/params.ts`（新規）
   - `src/core/params.test.ts`（新規）
@@ -124,7 +124,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit && npx vitest run src/core/params.test.ts`
 
-### - [ ] Task 07: 条件・シードコード（RP1形式・差分エンコード＆パース）の実装
+### - [x] Task 07: 条件・シードコード（RP1形式・差分エンコード＆パース）の実装
 - **対象ファイルパス**:
   - `src/utils/seedCode.ts`（新規）
   - `src/utils/seedCode.test.ts`（新規）
@@ -144,7 +144,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit && npx vitest run src/utils/seedCode.test.ts`
 
-### - [ ] Task 08: バッチ横断の非復元抽出プール（`drawFromPool`）の実装
+### - [x] Task 08: バッチ横断の非復元抽出プール（`drawFromPool`）の実装
 - **対象ファイルパス**:
   - `src/utils/pool.ts`（新規）
   - `src/utils/pool.test.ts`（新規）
