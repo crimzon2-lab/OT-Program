@@ -162,7 +162,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit && npx vitest run src/utils/pool.test.ts`
 
-### - [ ] Task 09: テスト用 `GenerateContext` ヘルパー（`makeTestContext`）とモジュールレジストリ骨格の実装
+### - [x] Task 09: テスト用 `GenerateContext` ヘルパー（`makeTestContext`）とモジュールレジストリ骨格の実装
 - **対象ファイルパス**:
   - `src/core/testing.ts`（新規）
   - `src/core/registry.ts`（新規）
@@ -180,7 +180,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit && npx vitest run`
 
-### - [ ] Task 10: バッチ生成オーケストレータ（`runJob`）の実装と単体テスト
+### - [x] Task 10: バッチ生成オーケストレータ（`runJob`）の実装と単体テスト
 - **対象ファイルパス**:
   - `src/core/generator.ts`（新規）
   - `src/core/generator.test.ts`（新規）
@@ -198,7 +198,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit && npx vitest run src/core/generator.test.ts`
 
-### - [ ] Task 11: プリセット保存・呼び出し・削除ストア（`PresetStore`）の実装
+### - [x] Task 11: プリセット保存・呼び出し・削除ストア（`PresetStore`）の実装
 - **対象ファイルパス**:
   - `src/core/presets.ts`（新規）
   - `src/core/presets.test.ts`（新規）
@@ -211,7 +211,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit && npx vitest run src/core/presets.test.ts`
 
-### - [ ] Task 12: 解答用紙のハイライト部品・4象限集計表・採点チェックリスト部品の実装
+### - [x] Task 12: 解答用紙のハイライト部品・4象限集計表・採点チェックリスト部品の実装
 - **対象ファイルパス**:
   - `src/print/answerParts.ts`（新規）
   - `src/print/answerParts.test.ts`（新規）

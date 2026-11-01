@@ -1,0 +1,85 @@
+import { afterEach, describe, expect, it } from 'vitest';
+import type { AnyTaskModule } from '../types/schema';
+import {
+  ALL_MODULES,
+  getModule,
+  getModulesByDomain,
+  registerModuleForTest,
+  resetRegistryForTest,
+} from './registry';
+import { makeTestContext } from './testing';
+
+describe('src/core/testing.ts and registry.ts', () => {
+  afterEach(() => {
+    resetRegistryForTest();
+  });
+
+  describe('makeTestContext', () => {
+    it('creates context with sensible defaults', () => {
+      const { ctx, warnings } = makeTestContext();
+      expect(ctx.moduleId).toBe('M01');
+      expect(ctx.seed).toBe(12345);
+      expect(ctx.sheetIndex).toBe(1);
+      expect(ctx.orientation).toBe('portrait');
+      expect(ctx.body).toEqual({ widthMm: 186, heightMm: 237 });
+      expect(warnings).toEqual([]);
+    });
+
+    it('collects warnings via warn()', () => {
+      const { ctx, warnings } = makeTestContext({ sheetIndex: 2 });
+      ctx.warn('COUNT_ROUNDED', 'テスト警告');
+      expect(warnings.length).toBe(1);
+      expect(warnings[0]).toEqual({
+        code: 'COUNT_ROUNDED',
+        message: 'テスト警告',
+        sheetIndex: 2,
+      });
+    });
+
+    it('draws from pool and throws error if poolKey is drawn twice in same context', () => {
+      const { ctx } = makeTestContext();
+      const items = ['a', 'b', 'c', 'd'];
+      const drawn = ctx.draw('pool1', items, 2);
+      expect(drawn.length).toBe(2);
+
+      // Same poolKey again in same context must throw Error
+      expect(() => ctx.draw('pool1', items, 2)).toThrow(/already been drawn/);
+
+      // Different poolKey is allowed
+      expect(() => ctx.draw('pool2', items, 2)).not.toThrow();
+    });
+  });
+
+  describe('registry', () => {
+    const dummyModule: AnyTaskModule = {
+      id: 'M01',
+      domain: 'attention',
+      title: '抹消課題',
+      shortTitle: '抹消',
+      description: 'テスト説明',
+      paramSchema: [],
+      orientation: () => 'portrait',
+      generate: () => ({ pages: [] }),
+    };
+
+    it('allows registering and getting test modules, and cleans up with unregister / reset', () => {
+      expect(ALL_MODULES).toEqual([]);
+      expect(getModule('M01')).toBeUndefined();
+
+      const unregister = registerModuleForTest(dummyModule);
+      expect(getModule('M01')).toBe(dummyModule);
+      expect(getModulesByDomain('attention')).toContain(dummyModule);
+
+      // Call unregister
+      unregister();
+      expect(getModule('M01')).toBeUndefined();
+    });
+
+    it('cleans up via resetRegistryForTest', () => {
+      registerModuleForTest(dummyModule);
+      expect(getModule('M01')).toBe(dummyModule);
+      resetRegistryForTest();
+      expect(getModule('M01')).toBeUndefined();
+    });
+  });
+});
