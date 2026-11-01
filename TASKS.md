@@ -328,7 +328,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit && npx vitest run`
 
-### - [ ] Task 19: A4 プレビュー領域（縮小表示・はみ出し検出・警告バナー）と画面 UI CSS（`app.css`）の実装
+### - [x] Task 19: A4 プレビュー領域（縮小表示・はみ出し検出・警告バナー）と画面 UI CSS（`app.css`）の実装
 - **対象ファイルパス**:
   - `src/ui/preview.ts`（新規）
   - `src/ui/app.css`（新規）
@@ -348,7 +348,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit && npx vitest run`
 
-### - [ ] Task 20: エントリポイント（`src/main.ts`）の配線とアプリ起動統合
+### - [x] Task 20: エントリポイント（`src/main.ts`）の配線とアプリ起動統合
 - **対象ファイルパス**:
   - `src/main.ts`（編集）
 - **参照する型・仕様**:
