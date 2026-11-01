@@ -427,7 +427,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit && npx vitest run src/modules/attention/m01-cancellation/logic.test.ts`
 
-### - [ ] Task 25: モジュール2（TMT様課題）生成ロジック（`logic.ts`）の実装
+### - [x] Task 25: モジュール2（TMT様課題）生成ロジック（`logic.ts`）の実装
 - **対象ファイルパス**:
   - `src/modules/attention/m02-tmt/logic.ts`（新規）
 - **参照する型・仕様**:
@@ -443,7 +443,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit`
 
-### - [ ] Task 26: モジュール2（TMT様課題）SVG 描画とモジュール定義の実装
+### - [x] Task 26: モジュール2（TMT様課題）SVG 描画とモジュール定義の実装
 - **対象ファイルパス**:
   - `src/modules/attention/m02-tmt/render.ts`（新規）
   - `src/modules/attention/m02-tmt/index.ts`（新規）
@@ -459,7 +459,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit`
 
-### - [ ] Task 27: モジュール2（TMT様課題）単体テストの実装
+### - [x] Task 27: モジュール2（TMT様課題）単体テストの実装
 - **対象ファイルパス**:
   - `src/modules/attention/m02-tmt/logic.test.ts`（新規）
 - **参照する型・仕様**:
