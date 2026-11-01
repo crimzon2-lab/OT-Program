@@ -276,7 +276,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit && npx vitest run src/print/sheet.test.ts`
 
-### - [ ] Task 16: アプリ状態管理・localStorage 永続化・シードコード連携（`appState.ts`）の実装
+### - [x] Task 16: アプリ状態管理・localStorage 永続化・シードコード連携（`appState.ts`）の実装
 - **対象ファイルパス**:
   - `src/ui/appState.ts`（新規）
   - `src/ui/appState.test.ts`（新規）
@@ -294,7 +294,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit && npx vitest run src/ui/appState.test.ts`
 
-### - [ ] Task 17: パラメータフォーム自動生成コンポーネント（`paramForm.ts`）とサイドバー（`sidebar.ts`）の実装
+### - [x] Task 17: パラメータフォーム自動生成コンポーネント（`paramForm.ts`）とサイドバー（`sidebar.ts`）の実装
 - **対象ファイルパス**:
   - `src/ui/paramForm.ts`（新規）
   - `src/ui/sidebar.ts`（新規）
@@ -312,7 +312,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit && npx vitest run`
 
-### - [ ] Task 18: ツールバー（シード・枚数・出力モード・条件コード読込・印刷ボタン）とプリセット管理パネルの実装
+### - [x] Task 18: ツールバー（シード・枚数・出力モード・条件コード読込・印刷ボタン）とプリセット管理パネルの実装
 - **対象ファイルパス**:
   - `src/ui/toolbar.ts`（新規）
   - `src/ui/presetPanel.ts`（新規）
