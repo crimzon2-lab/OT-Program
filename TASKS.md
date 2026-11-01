@@ -364,7 +364,7 @@
 
 ## Phase 1：A. 注意・情報処理領域（モジュール 1〜4）（Task 21 〜 Task 37）
 
-### - [ ] Task 21: 抹消・符号変換用の幾何学記号マスターデータ（`src/data/symbols.ts`）の作成
+### - [x] Task 21: 抹消・符号変換用の幾何学記号マスターデータ（`src/data/symbols.ts`）の作成
 - **対象ファイルパス**:
   - `src/data/symbols.ts`（新規）
   - `src/data/symbols.test.ts`（新規）
