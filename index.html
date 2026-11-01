@@ -6,10 +6,21 @@
     <!-- 完全オフライン動作：外部フォント・外部CDN・外部APIを一切読み込まないこと -->
     <!-- 通信遮断CSP（connect-src 'none'）は dev の HMR を壊すため、単一HTMLビルド時のみ Task 75 で注入する -->
     <title>リハプリント自動生成</title>
+    <link rel="stylesheet" href="/src/print/print.css" />
   </head>
   <body>
-    <!-- Task 14 で UI 骨格（#sidebar / #toolbar / #preview / #print-root）を実装する -->
-    <div id="app"></div>
+    <div id="app">
+      <div id="app-shell">
+        <aside id="sidebar"></aside>
+        <main id="main-pane">
+          <div id="toolbar"></div>
+          <div id="warnings"></div>
+          <div id="preview-viewport">
+            <div id="print-root"></div>
+          </div>
+        </main>
+      </div>
+    </div>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>

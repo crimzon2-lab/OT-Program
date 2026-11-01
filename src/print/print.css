@@ -1,0 +1,189 @@
+/**
+ * A4 印刷・シート組版 CSS
+ * ARCHITECTURE.md §3.2〜§3.5 準拠
+ */
+
+.sheet,
+.sheet * {
+  box-sizing: border-box;
+}
+
+.sheet {
+  --sheet-w: 210mm;
+  --sheet-h: 296.5mm;
+  width: var(--sheet-w);
+  height: var(--sheet-h);
+  padding: 12mm;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
+  color: #000000;
+  font-family: 'BIZ UDPGothic', 'BIZ UDPゴシック', 'Hiragino Kaku Gothic ProN', 'Hiragino Sans', Meiryo, sans-serif;
+  break-inside: avoid;
+  page-break-inside: avoid;
+  line-height: 1.4;
+}
+
+.sheet--landscape {
+  --sheet-w: 297mm;
+  --sheet-h: 209.5mm;
+}
+
+/* ヘッダー帯 (18mm) */
+.sheet__header {
+  flex: none;
+  height: 18mm;
+  border-bottom: 0.3mm solid #000000;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding-bottom: 1.5mm;
+}
+
+/* 教示文帯 (12mm) */
+.sheet__instruction {
+  flex: none;
+  height: 12mm;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  padding: 1mm 0;
+  color: #000000;
+}
+
+/* 本文領域 */
+.sheet__body {
+  flex: none;
+  position: relative;
+  overflow: hidden;
+}
+
+.sheet--portrait .sheet__body {
+  width: 186mm;
+  height: 237mm;
+}
+
+.sheet--landscape .sheet__body {
+  width: 273mm;
+  height: 150mm;
+}
+
+/* フッター帯 (5mm) */
+.sheet__footer {
+  flex: none;
+  height: 5mm;
+  margin-top: auto;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 2.8mm;
+  color: #000000;
+}
+
+/* inline 要素の下端隙間・縦溢れ防止 */
+.sheet svg {
+  display: block;
+}
+
+/* 本文内 HTML テーブル・枠組み用スタイル */
+.sheet table {
+  border-collapse: collapse;
+  width: 100%;
+}
+
+.sheet th,
+.sheet td {
+  border: 0.35mm solid #000000;
+  padding: 1.5mm;
+  text-align: center;
+}
+
+.sheet th {
+  background: #f0f0f0;
+}
+
+/* ---- 画面プレビュー ---- */
+@media screen {
+  .sheet-frame {
+    width: calc(var(--frame-w) * var(--zoom, 0.6));
+    height: calc(var(--frame-h) * var(--zoom, 0.6));
+    margin: 0 auto 8mm;
+    overflow: hidden;
+    box-shadow: 0 1px 6px rgba(0, 0, 0, 0.25);
+    background: #ffffff;
+  }
+
+  .sheet-frame--portrait {
+    --frame-w: 210mm;
+    --frame-h: 296.5mm;
+  }
+
+  .sheet-frame--landscape {
+    --frame-w: 297mm;
+    --frame-h: 209.5mm;
+  }
+
+  .sheet-frame > .sheet {
+    transform: scale(var(--zoom, 0.6));
+    transform-origin: top left;
+  }
+
+  .sheet.is-overflow .sheet__body {
+    outline: 1mm solid #d00000;
+  }
+}
+
+/* ---- 印刷 ---- */
+@media print {
+  html,
+  body {
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+  }
+
+  #sidebar,
+  #toolbar,
+  #warnings,
+  .no-print {
+    display: none !important;
+  }
+
+  #app-shell,
+  #main-pane,
+  #preview-viewport,
+  #print-root {
+    display: block !important;
+    position: static !important;
+    width: auto !important;
+    height: auto !important;
+    overflow: visible !important;
+    margin: 0 !important;
+    padding: 0 !important;
+  }
+
+  .sheet-frame {
+    width: auto !important;
+    height: auto !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+    overflow: visible !important;
+    break-after: page;
+    page-break-after: always;
+  }
+
+  .sheet-frame:last-child {
+    break-after: auto;
+    page-break-after: auto;
+  }
+
+  .sheet-frame > .sheet {
+    transform: none !important;
+  }
+
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

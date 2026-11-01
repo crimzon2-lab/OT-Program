@@ -229,7 +229,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit && npx vitest run src/print/answerParts.test.ts`
 
-### - [ ] Task 13: A4 印刷・シート組版 CSS（`print.css`）と動的 `@page` 制御（`pageStyle.ts`）の実装
+### - [x] Task 13: A4 印刷・シート組版 CSS（`print.css`）と動的 `@page` 制御（`pageStyle.ts`）の実装
 - **対象ファイルパス**:
   - `src/print/print.css`（新規）
   - `src/print/pageStyle.ts`（新規）
@@ -242,7 +242,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit && npx vitest run`
 
-### - [ ] Task 14: 役割別ヘッダー・フッター・A4 シート HTML 組版（`header.ts`, `sheet.ts`）および `index.html` 骨格の実装
+### - [x] Task 14: 役割別ヘッダー・フッター・A4 シート HTML 組版（`header.ts`, `sheet.ts`）および `index.html` 骨格の実装
 - **対象ファイルパス**:
   - `src/print/header.ts`（新規）
   - `src/print/sheet.ts`（新規）
@@ -264,7 +264,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit && npx vitest run`
 
-### - [ ] Task 15: シート組版・ヘッダー・校正バーの単体テスト
+### - [x] Task 15: シート組版・ヘッダー・校正バーの単体テスト
 - **対象ファイルパス**:
   - `src/print/sheet.test.ts`（新規）
 - **参照する型・仕様**:
