@@ -1,9 +1,12 @@
 /**
  * プリセット保存・呼び出し・削除ストア（PresetStore）
- * ARCHITECTURE.md §7 準拠
+ * ARCHITECTURE.md §7, §12 準拠
  */
 
+import { sanitizeParams } from './params';
+import { getModule } from './registry';
 import {
+  MODULE_IDS,
   PRESET_STORAGE_KEY,
   type AnswerOrder,
   type ModuleId,
@@ -53,6 +56,7 @@ function isValidPreset(item: unknown): item is Preset {
     p.id.length > 0 &&
     typeof p.name === 'string' &&
     typeof p.moduleId === 'string' &&
+    MODULE_IDS.includes(p.moduleId as ModuleId) &&
     p.params !== null &&
     typeof p.params === 'object' &&
     typeof p.createdAt === 'string' &&
@@ -72,7 +76,11 @@ export function loadPresets(storage: StorageLike): Preset[] {
     let list: readonly unknown[] = [];
     if (Array.isArray(parsed)) {
       list = parsed;
-    } else if (parsed && typeof parsed === 'object' && Array.isArray((parsed as PresetStore).presets)) {
+    } else if (
+      parsed &&
+      typeof parsed === 'object' &&
+      Array.isArray((parsed as PresetStore).presets)
+    ) {
       list = (parsed as PresetStore).presets;
     }
     return list.filter(isValidPreset);
@@ -95,10 +103,7 @@ export interface SavePresetInput {
  * プリセットを保存（新規追加または更新）し、保存されたプリセットを返す。
  * QuotaExceededError や SecurityError 等の例外も安全に処理する。
  */
-export function savePreset(
-  storage: StorageLike,
-  input: SavePresetInput,
-): Preset {
+export function savePreset(storage: StorageLike, input: SavePresetInput): Preset {
   const current = loadPresets(storage);
   const now = new Date().toISOString();
 
@@ -168,4 +173,145 @@ export function deletePreset(storage: StorageLike, id: string): Preset[] {
   }
 
   return filtered;
+}
+
+/**
+ * 保存済みプリセット一式を整形済み JSON 文字列として出力する。
+ */
+export function exportPresetsJson(storage: StorageLike): string {
+  const current = loadPresets(storage);
+  const store: PresetStore = {
+    version: 1,
+    presets: current,
+  };
+  return JSON.stringify(store, null, 2);
+}
+
+export interface ImportPresetsResult {
+  readonly imported: number;
+  readonly total: number;
+  readonly error?: string;
+}
+
+/**
+ * プリセット JSON を検証・サニタイズしてインポート（マージ保存）する。
+ * 不正な JSON や破損データでも例外を投げず安全にエラー情報を返す。
+ */
+export function importPresetsJson(
+  storage: StorageLike,
+  jsonText: string,
+): ImportPresetsResult {
+  let parsed: unknown;
+  try {
+    parsed = JSON.parse(jsonText);
+  } catch {
+    return {
+      imported: 0,
+      total: loadPresets(storage).length,
+      error: 'JSON の形式が不正です（構文エラー）',
+    };
+  }
+
+  let candidates: unknown[] = [];
+  if (Array.isArray(parsed)) {
+    candidates = parsed;
+  } else if (
+    parsed &&
+    typeof parsed === 'object' &&
+    Array.isArray((parsed as Record<string, unknown>).presets)
+  ) {
+    candidates = (parsed as Record<string, unknown>).presets as unknown[];
+  } else if (parsed && typeof parsed === 'object') {
+    candidates = [parsed];
+  } else {
+    return {
+      imported: 0,
+      total: loadPresets(storage).length,
+      error: 'プリセットのデータ形式が不正です（配列またはプリセットオブジェクトが必要です）',
+    };
+  }
+
+  const current = loadPresets(storage);
+  const now = new Date().toISOString();
+  let importedCount = 0;
+
+  for (const item of candidates) {
+    if (!item || typeof item !== 'object') continue;
+    const p = item as Record<string, unknown>;
+
+    // moduleId の検証
+    if (typeof p.moduleId !== 'string' || !MODULE_IDS.includes(p.moduleId as ModuleId)) {
+      continue;
+    }
+    const moduleId = p.moduleId as ModuleId;
+    const mod = getModule(moduleId);
+    if (!mod) continue;
+
+    // パラメータのサニタイズ（留意点4: 対象モジュールの sanitizeParams を通す）
+    const rawParams = (p.params && typeof p.params === 'object' ? p.params : {}) as ParamValues;
+    const sanitizedParams = sanitizeParams(mod, rawParams).params;
+
+    const id = typeof p.id === 'string' && p.id.trim().length > 0 ? p.id.trim() : generatePresetId();
+    const name = typeof p.name === 'string' && p.name.trim().length > 0 ? p.name.trim() : '無題プリセット';
+
+    // 出力設定の正規化
+    let batchCount: number | undefined;
+    if (typeof p.batchCount === 'number' && Number.isFinite(p.batchCount)) {
+      batchCount = Math.max(1, Math.min(10, Math.round(p.batchCount)));
+    }
+
+    let outputMode: OutputMode | undefined;
+    if (p.outputMode === 'problemOnly' || p.outputMode === 'withAnswer') {
+      outputMode = p.outputMode;
+    }
+
+    let answerOrder: AnswerOrder | undefined;
+    if (p.answerOrder === 'grouped' || p.answerOrder === 'interleaved') {
+      answerOrder = p.answerOrder;
+    }
+
+    const createdAt = typeof p.createdAt === 'string' ? p.createdAt : now;
+    const updatedAt = typeof p.updatedAt === 'string' ? p.updatedAt : now;
+
+    const presetEntry: Preset = {
+      id,
+      name,
+      moduleId,
+      params: sanitizedParams,
+      batchCount,
+      outputMode,
+      answerOrder,
+      createdAt,
+      updatedAt,
+    };
+
+    // 既存 ID は上書き、新規 ID は追加
+    const existingIdx = current.findIndex((existing) => existing.id === id);
+    if (existingIdx !== -1) {
+      current[existingIdx] = presetEntry;
+    } else {
+      current.push(presetEntry);
+    }
+    importedCount++;
+  }
+
+  if (importedCount > 0) {
+    const store: PresetStore = {
+      version: 1,
+      presets: current,
+    };
+    try {
+      storage.setItem(PRESET_STORAGE_KEY, JSON.stringify(store));
+    } catch {
+      // 安全ハンドリング
+    }
+  }
+
+  return {
+    imported: importedCount,
+    total: current.length,
+    ...(importedCount === 0 && candidates.length > 0
+      ? { error: '有効なプリセットデータが見つかりませんでした' }
+      : {}),
+  };
 }

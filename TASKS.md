@@ -1276,7 +1276,7 @@
 
 ## Phase 5：単一 HTML ビルド・全モジュール総合検証・院内配布対応（Task 75 〜 Task 80）
 
-### - [ ] Task 75: `vite-plugin-singlefile` による単一 HTML ビルド（`dist/index.html`）と通信遮断 CSP 注入の構成
+### - [x] Task 75: `vite-plugin-singlefile` による単一 HTML ビルド（`dist/index.html`）と通信遮断 CSP 注入の構成
 - **対象ファイルパス**:
   - `vite.config.ts`（編集）
 - **参照する型・仕様**:
@@ -1290,7 +1290,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit && npm run build:single`
 
-### - [ ] Task 76: 全12モジュール横断スモーク＆契約遵守テスト（`src/modules/all.test.ts`）の実装
+### - [x] Task 76: 全12モジュール横断スモーク＆契約遵守テスト（`src/modules/all.test.ts`）の実装
 - **対象ファイルパス**:
   - `src/modules/all.test.ts`（新規）
 - **参照する型・仕様**:
@@ -1310,7 +1310,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit && npx vitest run src/modules/all.test.ts`
 
-### - [ ] Task 77: 全マスターデータ最低収録件数・品質基準の一括検証テスト（`src/data/all-data.test.ts`）の実装
+### - [x] Task 77: 全マスターデータ最低収録件数・品質基準の一括検証テスト（`src/data/all-data.test.ts`）の実装
 - **対象ファイルパス**:
   - `src/data/all-data.test.ts`（新規）
 - **参照する型・仕様**:
@@ -1322,7 +1322,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit && npx vitest run src/data/all-data.test.ts`
 
-### - [ ] Task 78: 単一 HTML 出力（`dist/index.html`）の自動検証スクリプト（`scripts/verify-single.mjs`）の実装
+### - [x] Task 78: 単一 HTML 出力（`dist/index.html`）の自動検証スクリプト（`scripts/verify-single.mjs`）の実装
 - **対象ファイルパス**:
   - `scripts/verify-single.mjs`（新規）
   - `package.json`（`verify:single` スクリプト追加）
@@ -1339,7 +1339,7 @@
 - **完了確認コマンド**:
   - `npm run verify:single`
 
-### - [ ] Task 79: 院内オフライン PC 配布・運用・印刷設定ガイド（`DISTRIBUTION.md`）の作成
+### - [x] Task 79: 院内オフライン PC 配布・運用・印刷設定ガイド（`DISTRIBUTION.md`）の作成
 - **対象ファイルパス**:
   - `DISTRIBUTION.md`（新規）
 - **参照する型・仕様**:
@@ -1353,7 +1353,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit`
 
-### - [ ] Task 80: プリセット JSON エクスポート／インポート機能と最終総合ビルド検証
+### - [x] Task 80: プリセット JSON エクスポート／インポート機能と最終総合ビルド検証
 - **対象ファイルパス**:
   - `src/core/presets.ts`（編集）
   - `src/core/presets.test.ts`（編集）

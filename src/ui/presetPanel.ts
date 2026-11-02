@@ -1,9 +1,16 @@
 /**
  * プリセット管理パネルコンポーネント
- * ARCHITECTURE.md §7 準拠
+ * ARCHITECTURE.md §7, §12 準拠
+ * TASKS.md Task 80
  */
 
-import { deletePreset, loadPresets, savePreset } from '../core/presets';
+import {
+  deletePreset,
+  exportPresetsJson,
+  importPresetsJson,
+  loadPresets,
+  savePreset,
+} from '../core/presets';
 import type { Preset, StorageLike } from '../types/schema';
 import type { AppStore } from './appState';
 
@@ -53,9 +60,9 @@ export function createPresetPanel(opts: PresetPanelOptions): PresetPanelControll
     saveBtn.className = 'btn btn--secondary preset-panel__btn-save';
     saveBtn.textContent = '保存';
 
-    const errorMsg = document.createElement('div');
-    errorMsg.className = 'preset-panel__error';
-    errorMsg.setAttribute('role', 'alert');
+    const statusMsg = document.createElement('div');
+    statusMsg.className = 'preset-panel__error';
+    statusMsg.setAttribute('role', 'status');
 
     let isComposing = false;
     nameInput.addEventListener('compositionstart', () => {
@@ -69,11 +76,11 @@ export function createPresetPanel(opts: PresetPanelOptions): PresetPanelControll
       if (isComposing) return;
       const name = nameInput.value.trim();
       if (!name) {
-        errorMsg.textContent = 'プリセット名を入力してください';
+        statusMsg.textContent = 'プリセット名を入力してください';
         return;
       }
 
-      errorMsg.textContent = '';
+      statusMsg.textContent = '';
       const state = store.getState();
       savePreset(storage, {
         name,
@@ -90,13 +97,98 @@ export function createPresetPanel(opts: PresetPanelOptions): PresetPanelControll
 
     saveBox.appendChild(nameInput);
     saveBox.appendChild(saveBtn);
-    saveBox.appendChild(errorMsg);
+    saveBox.appendChild(statusMsg);
     container.appendChild(saveBox);
 
     // プリセット一覧コンテナ
     const listBox = document.createElement('div');
     listBox.className = 'preset-panel__list';
     container.appendChild(listBox);
+
+    // ファイル書き出し／読み込み（JSON入出力）ブロック
+    const fileActionsBox = document.createElement('div');
+    fileActionsBox.className = 'preset-panel__file-actions';
+    fileActionsBox.style.display = 'flex';
+    fileActionsBox.style.gap = '6px';
+    fileActionsBox.style.marginTop = '8px';
+
+    const exportBtn = document.createElement('button');
+    exportBtn.type = 'button';
+    exportBtn.className = 'btn btn--secondary preset-panel__btn-export';
+    exportBtn.style.fontSize = '11px';
+    exportBtn.style.padding = '4px 8px';
+    exportBtn.textContent = 'JSONへ書き出し';
+    exportBtn.title = '保存済みプリセットをJSONファイルとして保存します';
+
+    exportBtn.addEventListener('click', () => {
+      try {
+        const jsonText = exportPresetsJson(storage);
+        const blob = new Blob([jsonText], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = 'reha-print-presets.json';
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        URL.revokeObjectURL(url);
+      } catch (err) {
+        statusMsg.textContent = 'エクスポートに失敗しました';
+      }
+    });
+
+    const fileInput = document.createElement('input');
+    fileInput.type = 'file';
+    fileInput.accept = '.json,application/json';
+    fileInput.style.display = 'none';
+
+    const importBtn = document.createElement('button');
+    importBtn.type = 'button';
+    importBtn.className = 'btn btn--secondary preset-panel__btn-import';
+    importBtn.style.fontSize = '11px';
+    importBtn.style.padding = '4px 8px';
+    importBtn.textContent = 'JSONから読み込み';
+    importBtn.title = 'JSONファイルからプリセットを読み込みマージします';
+
+    importBtn.addEventListener('click', () => {
+      fileInput.click();
+    });
+
+    fileInput.addEventListener('change', () => {
+      const file = fileInput.files?.[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          const content = typeof reader.result === 'string' ? reader.result : '';
+          const result = importPresetsJson(storage, content);
+          if (result.error) {
+            statusMsg.textContent = result.error;
+          } else {
+            statusMsg.textContent = `${result.imported} 件のプリセットを読み込みました`;
+            renderList();
+          }
+        } catch {
+          statusMsg.textContent = '読み込み中にエラーが発生しました';
+        } finally {
+          // 同じファイルを再度選択できるように値をリセット
+          fileInput.value = '';
+        }
+      };
+
+      reader.onerror = () => {
+        statusMsg.textContent = 'ファイルの読み込みに失敗しました';
+        fileInput.value = '';
+      };
+
+      reader.readAsText(file);
+    });
+
+    fileActionsBox.appendChild(exportBtn);
+    fileActionsBox.appendChild(importBtn);
+    fileActionsBox.appendChild(fileInput);
+    container.appendChild(fileActionsBox);
 
     renderList();
 
