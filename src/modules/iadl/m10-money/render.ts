@@ -35,6 +35,118 @@ interface PlacedMoney {
   readonly w: number;
   readonly h: number;
   readonly isCoin: boolean;
+  readonly scale: number;
+}
+
+/**
+ * 金種の基準サイズ（scale = 1.0 時、単位 mm）を返す
+ */
+function getBaseMoneySize(denom: Denomination): { w: number; h: number; isCoin: boolean } {
+  if (denom <= 500) {
+    const d = COIN_SPECS[denom as 1 | 5 | 10 | 50 | 100 | 500].diameterMm;
+    return { w: d, h: d, isCoin: true };
+  }
+  const spec = BILL_SPECS[denom as 1000 | 5000 | 10000];
+  return {
+    w: spec.widthMm * BILL_DRAW_SCALE,
+    h: spec.heightMm * BILL_DRAW_SCALE,
+    isCoin: false,
+  };
+}
+
+/**
+ * 指定領域 (area) 内にすべての硬貨・紙幣が重ならず収まるスケールを自動計算し、
+ * 各アイテムの中心座標 (cx, cy) を返す。
+ */
+function layoutMoneyItems(
+  items: readonly { readonly id: number; readonly denom: Denomination }[],
+  area: { readonly x: number; readonly y: number; readonly w: number; readonly h: number },
+  maxScale: number,
+  gapXBase = 2.8,
+  gapYBase = 2.4,
+): readonly PlacedMoney[] {
+  if (items.length === 0) return [];
+
+  const minScale = 0.34;
+  let chosenScale = minScale;
+
+  // スケール s で行割りした結果を返す内部関数
+  const computeRows = (s: number) => {
+    const gapX = gapXBase * s;
+    const gapY = gapYBase * s;
+    const rows: {
+      items: { id: number; denom: Denomination; w: number; h: number; isCoin: boolean }[];
+      rowH: number;
+    }[] = [];
+
+    let curRow: { id: number; denom: Denomination; w: number; h: number; isCoin: boolean }[] = [];
+    let curW = 0;
+    let curMaxH = 0;
+
+    for (const item of items) {
+      const base = getBaseMoneySize(item.denom);
+      const w = base.w * s;
+      const h = base.h * s;
+
+      if (curRow.length > 0 && curW + gapX + w > area.w) {
+        rows.push({ items: curRow, rowH: curMaxH });
+        curRow = [{ id: item.id, denom: item.denom, w, h, isCoin: base.isCoin }];
+        curW = w;
+        curMaxH = h;
+      } else {
+        curW = curRow.length === 0 ? w : curW + gapX + w;
+        if (h > curMaxH) curMaxH = h;
+        curRow.push({ id: item.id, denom: item.denom, w, h, isCoin: base.isCoin });
+      }
+    }
+    if (curRow.length > 0) {
+      rows.push({ items: curRow, rowH: curMaxH });
+    }
+
+    const totalH =
+      rows.reduce((sum, r) => sum + r.rowH, 0) + Math.max(0, rows.length - 1) * gapY;
+
+    return { rows, totalH, gapX, gapY };
+  };
+
+  // maxScale から 0.03 刻みで下げて、area.h に収まる最大のスケールを探す
+  for (let s = maxScale; s >= minScale - 1e-6; s -= 0.03) {
+    const { totalH } = computeRows(s);
+    if (totalH <= area.h) {
+      chosenScale = s;
+      break;
+    }
+  }
+
+  const { rows, totalH, gapX, gapY } = computeRows(chosenScale);
+  const startY = area.y + Math.max(0, (area.h - totalH) / 2);
+
+  const placed: PlacedMoney[] = [];
+  let curTopY = startY;
+
+  for (const row of rows) {
+    let curX = area.x;
+    const cy = curTopY + row.rowH / 2;
+
+    for (const it of row.items) {
+      const cx = curX + it.w / 2;
+      placed.push({
+        id: it.id,
+        denom: it.denom,
+        cx,
+        cy,
+        w: it.w,
+        h: it.h,
+        isCoin: it.isCoin,
+        scale: chosenScale,
+      });
+      curX += it.w + gapX;
+    }
+
+    curTopY += row.rowH + gapY;
+  }
+
+  return placed;
 }
 
 /**
@@ -49,19 +161,21 @@ function renderCoinTotal(
   isAnswer: boolean,
 ): string {
   const Q = problems.length;
-  const rowH = (bodyH - 8) / Q;
+  const rowH = (bodyH - 6) / Q;
   const baseStroke = (TYPOGRAPHY.baseStrokeMm * strokeScale) / 100;
   const font = TYPOGRAPHY.fontFamily;
   const ink = TYPOGRAPHY.inkColor;
-  const scale = Q >= 5 ? 0.78 : Q >= 4 ? 0.85 : 0.95;
+  // 文字倍率が大きすぎても枠線やお金と重ならないよう上限を設ける
+  const tScale = Math.min(1.22, textScale / 100);
+  const maxScale = Q >= 5 ? 0.78 : Q >= 4 ? 0.85 : 0.95;
 
   const elements: string[] = [];
 
   for (let q = 0; q < Q; q++) {
     const prob = problems[q]!;
-    const topY = 4 + q * rowH;
+    const topY = 3 + q * rowH;
 
-    // 区切り枠または下線
+    // 区切り破線
     if (q > 0) {
       elements.push(
         `<line x1="6" y1="${fmt(topY)}" x2="${fmt(bodyW - 6)}" y2="${fmt(topY)}" stroke="#CCCCCC" stroke-width="0.3" stroke-dasharray="2 2" />`,
@@ -70,53 +184,43 @@ function renderCoinTotal(
 
     // 問題番号
     elements.push(
-      `<text x="8" y="${fmt(topY + 7)}" font-size="${fmt(4.2 * (textScale / 100))}" font-weight="bold" font-family="${font}" fill="${ink}">（${prob.id}）</text>`,
+      `<text x="6" y="${fmt(topY + 7)}" font-size="${fmt(4.0 * tScale)}" font-weight="bold" font-family="${font}" fill="${ink}">（${prob.id}）</text>`,
     );
 
-    // 硬貨・紙幣のレイアウト配置
-    let curX = 24;
-    let curY = topY + rowH * 0.42;
-    const maxX = bodyW - 60;
-    const lineH = 18 * scale;
+    // 硬貨・紙幣の自動スケーリング＆非重複レイアウト配置
+    const area = {
+      x: 21,
+      y: topY + 2,
+      w: bodyW - 76, // 186 - 76 = 110mm
+      h: rowH - 4,
+    };
+    const itemsWithId = prob.items.map((denom, idx) => ({ id: idx + 1, denom }));
+    const placedList = layoutMoneyItems(itemsWithId, area, maxScale, 2.5, 2.2);
 
-    for (const denom of prob.items) {
-      const isCoin = denom <= 500;
-      const w = isCoin
-        ? COIN_SPECS[denom as 1 | 5 | 10 | 50 | 100 | 500].diameterMm * scale
-        : BILL_SPECS[denom as 1000 | 5000 | 10000].widthMm * BILL_DRAW_SCALE * scale;
-
-      if (curX + w > maxX) {
-        curX = 24;
-        curY += lineH;
-      }
-
-      const cx = curX + w / 2;
-      const cy = curY;
-      const rendered = renderMoneySvgItem(denom, cx, cy, scale, strokeScale);
+    for (const p of placedList) {
+      const rendered = renderMoneySvgItem(p.denom, p.cx, p.cy, p.scale, strokeScale);
       elements.push(rendered.svg);
-
-      curX += w + 2.5 * scale;
     }
 
     // 右側の記入欄
-    const answerX = bodyW - 48;
-    const answerY = topY + rowH * 0.48;
+    const answerX = bodyW - 49;
+    const answerY = topY + rowH * 0.46;
 
     elements.push(
-      `<text x="${fmt(answerX)}" y="${fmt(answerY)}" font-size="${fmt(4.5 * (textScale / 100))}" font-family="${font}" fill="${ink}" text-anchor="end" dominant-baseline="central">合計</text>`,
-      `<rect x="${fmt(answerX + 3)}" y="${fmt(answerY - 6)}" width="36" height="12" fill="#FFFFFF" stroke="${ink}" stroke-width="${fmt(baseStroke)}" rx="0.5" />`,
-      `<text x="${fmt(answerX + 41)}" y="${fmt(answerY)}" font-size="${fmt(4.5 * (textScale / 100))}" font-family="${font}" fill="${ink}" text-anchor="start" dominant-baseline="central">円</text>`,
+      `<text x="${fmt(answerX)}" y="${fmt(answerY)}" font-size="${fmt(4.0 * tScale)}" font-family="${font}" fill="${ink}" text-anchor="end" dominant-baseline="central">合計</text>`,
+      `<rect x="${fmt(answerX + 2)}" y="${fmt(answerY - 6)}" width="35" height="12" fill="#FFFFFF" stroke="${ink}" stroke-width="${fmt(baseStroke)}" rx="0.5" />`,
+      `<text x="${fmt(answerX + 39)}" y="${fmt(answerY)}" font-size="${fmt(4.0 * tScale)}" font-family="${font}" fill="${ink}" text-anchor="start" dominant-baseline="central">円</text>`,
     );
 
     if (isAnswer) {
       // 解答金額
       elements.push(
-        `<text x="${fmt(answerX + 21)}" y="${fmt(answerY)}" font-size="${fmt(5.0 * (textScale / 100))}" font-weight="bold" font-family="${font}" fill="#CC0000" text-anchor="middle" dominant-baseline="central">${fmt(prob.totalAmount)}</text>`,
+        `<text x="${fmt(answerX + 19.5)}" y="${fmt(answerY)}" font-size="${fmt(4.4 * tScale)}" font-weight="bold" font-family="${font}" fill="#CC0000" text-anchor="middle" dominant-baseline="central">${fmt(prob.totalAmount)}</text>`,
       );
       // 内訳
       const breakdownText = prob.breakdown.map((b) => `${b.denom}円×${b.count}`).join(', ');
       elements.push(
-        `<text x="${fmt(answerX + 40)}" y="${fmt(answerY + 9)}" font-size="${fmt(2.6 * (textScale / 100))}" font-family="${font}" fill="#555555" text-anchor="end" dominant-baseline="central">${esc(breakdownText)}</text>`,
+        `<text x="${fmt(bodyW - 6)}" y="${fmt(Math.min(topY + rowH - 2, answerY + 9))}" font-size="${fmt(2.5 * Math.min(1.1, tScale))}" font-family="${font}" fill="#555555" text-anchor="end" dominant-baseline="central">${esc(breakdownText)}</text>`,
       );
     }
   }
@@ -136,17 +240,18 @@ function renderPayment(
   isAnswer: boolean,
 ): string {
   const Q = problems.length;
-  const rowH = (bodyH - 8) / Q;
+  const rowH = (bodyH - 6) / Q;
   const font = TYPOGRAPHY.fontFamily;
   const ink = TYPOGRAPHY.inkColor;
-  const scale = 0.85;
+  const tScale = Math.min(1.22, textScale / 100);
+  const maxScale = Q >= 5 ? 0.76 : Q >= 4 ? 0.82 : 0.9;
 
   const elements: string[] = [];
   const answerHighlights: string[] = [];
 
   for (let q = 0; q < Q; q++) {
     const prob = problems[q]!;
-    const topY = 4 + q * rowH;
+    const topY = 3 + q * rowH;
 
     if (q > 0) {
       elements.push(
@@ -156,38 +261,24 @@ function renderPayment(
 
     // 問題ヘッダー
     elements.push(
-      `<text x="8" y="${fmt(topY + 6)}" font-size="${fmt(4.2 * (textScale / 100))}" font-weight="bold" font-family="${font}" fill="${ink}">（${prob.id}） 支払う金額： <tspan font-size="${fmt(4.8 * (textScale / 100))}">${fmt(prob.price)}</tspan> 円</text>`,
+      `<text x="8" y="${fmt(topY + 5.8)}" font-size="${fmt(3.8 * tScale)}" font-weight="bold" font-family="${font}" fill="${ink}">（${prob.id}） 支払う金額： <tspan font-size="${fmt(4.4 * tScale)}">${fmt(prob.price)}</tspan> 円</text>`,
     );
 
-    // 手持ち財布の硬貨・紙幣配置
-    let curX = 14;
-    let curY = topY + 18;
-    const maxX = bodyW - 12;
-    const lineH = 19 * scale;
-    const placedList: PlacedMoney[] = [];
+    // 手持ち財布の硬貨・紙幣配置（問題用紙・解答用紙で完全に同一座標にするため同じ area で計算）
+    const headerReserve = 8.5;
+    const footerReserve = 5.5;
+    const area = {
+      x: 12,
+      y: topY + headerReserve,
+      w: bodyW - 24,
+      h: Math.max(12, rowH - headerReserve - footerReserve),
+    };
 
-    for (const item of prob.wallet) {
-      const isCoin = item.denom <= 500;
-      const w = isCoin
-        ? COIN_SPECS[item.denom as 1 | 5 | 10 | 50 | 100 | 500].diameterMm * scale
-        : BILL_SPECS[item.denom as 1000 | 5000 | 10000].widthMm * BILL_DRAW_SCALE * scale;
-      const h = isCoin
-        ? w
-        : BILL_SPECS[item.denom as 1000 | 5000 | 10000].heightMm * BILL_DRAW_SCALE * scale;
+    const placedList = layoutMoneyItems(prob.wallet, area, maxScale, 3.2, 2.8);
 
-      if (curX + w > maxX) {
-        curX = 14;
-        curY += lineH;
-      }
-
-      const cx = curX + w / 2;
-      const cy = curY;
-      placedList.push({ id: item.id, denom: item.denom, cx, cy, w, h, isCoin });
-
-      const rendered = renderMoneySvgItem(item.denom, cx, cy, scale, strokeScale);
+    for (const p of placedList) {
+      const rendered = renderMoneySvgItem(p.denom, p.cx, p.cy, p.scale, strokeScale);
       elements.push(rendered.svg);
-
-      curX += w + 3.0 * scale;
     }
 
     // 解答ハイライト（支払いに使う硬貨に赤丸、紙幣に赤角丸枠）
@@ -199,23 +290,24 @@ function renderPayment(
         if (selectedSet.has(p.id)) {
           paySum += p.denom;
           if (p.isCoin) {
-            // 硬貨: answerCircle
             answerHighlights.push(answerCircle(p.cx, p.cy, p.w, strokeScale));
           } else {
-            // 紙幣: answerRect
-            answerHighlights.push(answerRect(p.cx - p.w / 2 - 1, p.cy - p.h / 2 - 1, p.w + 2, p.h + 2, strokeScale));
+            answerHighlights.push(
+              answerRect(p.cx - p.w / 2 - 1, p.cy - p.h / 2 - 1, p.w + 2, p.h + 2, strokeScale),
+            );
           }
         }
       }
 
       // 解答説明
-      const explainY = topY + rowH - 4;
-      const desc = prob.changeAmount > 0
-        ? `【解答】支払い合計：${paySum} 円　おつり：${prob.changeAmount} 円（硬貨 ${prob.changeCoinsCount} 枚）`
-        : `【解答】ちょうど ${paySum} 円を支払います`;
+      const explainY = topY + rowH - 1.8;
+      const desc =
+        prob.changeAmount > 0
+          ? `【解答】支払い合計：${paySum} 円　おつり：${prob.changeAmount} 円（硬貨 ${prob.changeCoinsCount} 枚）`
+          : `【解答】ちょうど ${paySum} 円を支払います`;
 
       elements.push(
-        `<text x="14" y="${fmt(explainY)}" font-size="${fmt(3.2 * (textScale / 100))}" font-weight="bold" font-family="${font}" fill="#CC0000">${esc(desc)}</text>`,
+        `<text x="12" y="${fmt(explainY)}" font-size="${fmt(3.0 * Math.min(1.15, tScale))}" font-weight="bold" font-family="${font}" fill="#CC0000">${esc(desc)}</text>`,
       );
     }
   }
@@ -242,6 +334,7 @@ function renderShopping(
   const font = TYPOGRAPHY.fontFamily;
   const ink = TYPOGRAPHY.inkColor;
   const baseStroke = (TYPOGRAPHY.baseStrokeMm * strokeScale) / 100;
+  const tScale = Math.min(1.2, textScale / 100);
   const elements: string[] = [];
 
   // 1. 上部：商品価格表
@@ -253,7 +346,7 @@ function renderShopping(
   elements.push(
     `<rect x="6" y="${fmt(tableTop)}" width="${fmt(tableW)}" height="${fmt(tableH)}" fill="#FAFAFA" stroke="${ink}" stroke-width="${fmt(baseStroke)}" rx="0.5" />`,
     `<rect x="6" y="${fmt(tableTop)}" width="${fmt(tableW)}" height="8" fill="#EEEEEE" stroke="${ink}" stroke-width="${fmt(baseStroke)}" />`,
-    `<text x="${fmt(bodyW / 2)}" y="${fmt(tableTop + 5.2)}" font-size="${fmt(4.0 * (textScale / 100))}" font-weight="bold" font-family="${font}" fill="${ink}" text-anchor="middle">商品価格表</text>`,
+    `<text x="${fmt(bodyW / 2)}" y="${fmt(tableTop + 5.2)}" font-size="${fmt(4.0 * tScale)}" font-weight="bold" font-family="${font}" fill="${ink}" text-anchor="middle">商品価格表</text>`,
     `<line x1="${fmt(6 + colW)}" y1="${fmt(tableTop + 8)}" x2="${fmt(6 + colW)}" y2="${fmt(tableTop + tableH)}" stroke="#CCCCCC" stroke-width="0.3" />`,
   );
 
@@ -267,13 +360,9 @@ function renderShopping(
     const itemX = 6 + col * colW + 4;
     const itemY = tableTop + 8 + (row + 0.5) * rowHeight;
 
-    const discountTag = (data.level === 'discount' && (item.price % 10 === 0 || item.price % 2 === 0))
-      ? ''
-      : '';
-
     elements.push(
-      `<text x="${fmt(itemX)}" y="${fmt(itemY + 1.2)}" font-size="${fmt(3.2 * (textScale / 100))}" font-family="${font}" fill="${ink}">・${esc(item.name)}（${esc(item.unit)}）</text>`,
-      `<text x="${fmt(itemX + colW - 8)}" y="${fmt(itemY + 1.2)}" font-size="${fmt(3.4 * (textScale / 100))}" font-weight="bold" font-family="${font}" fill="${ink}" text-anchor="end">${fmt(item.price)} 円${discountTag}</text>`,
+      `<text x="${fmt(itemX)}" y="${fmt(itemY + 1.2)}" font-size="${fmt(3.2 * tScale)}" font-family="${font}" fill="${ink}">・${esc(item.name)}（${esc(item.unit)}）</text>`,
+      `<text x="${fmt(itemX + colW - 8)}" y="${fmt(itemY + 1.2)}" font-size="${fmt(3.4 * tScale)}" font-weight="bold" font-family="${font}" fill="${ink}" text-anchor="end">${fmt(item.price)} 円</text>`,
     );
 
     if (row < halfLen - 1) {
@@ -289,9 +378,9 @@ function renderShopping(
   if (data.level === 'budget') {
     // budget 課題
     elements.push(
-      `<text x="8" y="${fmt(taskTop + 5)}" font-size="${fmt(4.2 * (textScale / 100))}" font-weight="bold" font-family="${font}" fill="${ink}">【 予算内の買い物 】</text>`,
-      `<text x="8" y="${fmt(taskTop + 14)}" font-size="${fmt(4.0 * (textScale / 100))}" font-family="${font}" fill="${ink}">予算： <tspan font-weight="bold" font-size="${fmt(5.0 * (textScale / 100))}">${fmt(data.budgetAmount)}</tspan> 円</text>`,
-      `<text x="8" y="${fmt(taskTop + 22)}" font-size="${fmt(3.4 * (textScale / 100))}" font-family="${font}" fill="${ink}">下の候補商品から、予算以内で合計金額が最も高くなる組み合わせを選びましょう。</text>`,
+      `<text x="8" y="${fmt(taskTop + 5)}" font-size="${fmt(4.2 * tScale)}" font-weight="bold" font-family="${font}" fill="${ink}">【 予算内の買い物 】</text>`,
+      `<text x="8" y="${fmt(taskTop + 14)}" font-size="${fmt(4.0 * tScale)}" font-family="${font}" fill="${ink}">予算： <tspan font-weight="bold" font-size="${fmt(5.0 * tScale)}">${fmt(data.budgetAmount)}</tspan> 円</text>`,
+      `<text x="8" y="${fmt(taskTop + 22)}" font-size="${fmt(3.4 * tScale)}" font-family="${font}" fill="${ink}">下の候補商品から、予算以内で合計金額が最も高くなる組み合わせを選びましょう。</text>`,
     );
 
     // 候補商品一覧
@@ -306,8 +395,8 @@ function renderShopping(
 
       elements.push(
         `<rect x="10" y="${fmt(candY - 4)}" width="${fmt(bodyW - 20)}" height="10" fill="${isAnswer && isChosen ? '#FFF5F5' : '#FFFFFF'}" stroke="${boxColor}" stroke-width="${fmt(isAnswer && isChosen ? baseStroke * 1.5 : 0.3)}" rx="0.4" />`,
-        `<text x="14" y="${fmt(candY + 2.5)}" font-size="${fmt(4.0 * (textScale / 100))}" font-family="${font}" fill="${boxColor}">${checkMark} ${esc(cand.name)}（${esc(cand.unit)}）</text>`,
-        `<text x="${fmt(bodyW - 16)}" y="${fmt(candY + 2.5)}" font-size="${fmt(4.0 * (textScale / 100))}" font-weight="bold" font-family="${font}" fill="${boxColor}" text-anchor="end">${fmt(cand.price)} 円</text>`,
+        `<text x="14" y="${fmt(candY + 2.5)}" font-size="${fmt(4.0 * tScale)}" font-family="${font}" fill="${boxColor}">${checkMark} ${esc(cand.name)}（${esc(cand.unit)}）</text>`,
+        `<text x="${fmt(bodyW - 16)}" y="${fmt(candY + 2.5)}" font-size="${fmt(4.0 * tScale)}" font-weight="bold" font-family="${font}" fill="${boxColor}" text-anchor="end">${fmt(cand.price)} 円</text>`,
       );
       candY += 12;
     }
@@ -316,20 +405,20 @@ function renderShopping(
     const calcY = candY + 6;
     elements.push(
       `<rect x="10" y="${fmt(calcY)}" width="${fmt(bodyW - 20)}" height="26" fill="#FFFFFF" stroke="${ink}" stroke-width="${fmt(baseStroke)}" rx="0.5" />`,
-      `<text x="16" y="${fmt(calcY + 9)}" font-size="${fmt(4.0 * (textScale / 100))}" font-family="${font}" fill="${ink}">選んだ商品の合計金額： ＿＿＿＿＿＿ 円</text>`,
-      `<text x="16" y="${fmt(calcY + 19)}" font-size="${fmt(4.0 * (textScale / 100))}" font-family="${font}" fill="${ink}">予算の残り（おつり）： ＿＿＿＿＿＿ 円</text>`,
+      `<text x="16" y="${fmt(calcY + 9)}" font-size="${fmt(4.0 * tScale)}" font-family="${font}" fill="${ink}">選んだ商品の合計金額： ＿＿＿＿＿＿ 円</text>`,
+      `<text x="16" y="${fmt(calcY + 19)}" font-size="${fmt(4.0 * tScale)}" font-family="${font}" fill="${ink}">予算の残り（おつり）： ＿＿＿＿＿＿ 円</text>`,
     );
 
     if (isAnswer) {
       elements.push(
-        `<text x="${fmt(bodyW - 40)}" y="${fmt(calcY + 9)}" font-size="${fmt(4.5 * (textScale / 100))}" font-weight="bold" font-family="${font}" fill="#CC0000" text-anchor="end">${fmt(data.bestTotalAmount)} 円</text>`,
-        `<text x="${fmt(bodyW - 40)}" y="${fmt(calcY + 19)}" font-size="${fmt(4.5 * (textScale / 100))}" font-weight="bold" font-family="${font}" fill="#CC0000" text-anchor="end">${fmt(data.bestRemainingBudget)} 円</text>`,
+        `<text x="${fmt(bodyW - 40)}" y="${fmt(calcY + 9)}" font-size="${fmt(4.5 * tScale)}" font-weight="bold" font-family="${font}" fill="#CC0000" text-anchor="end">${fmt(data.bestTotalAmount)} 円</text>`,
+        `<text x="${fmt(bodyW - 40)}" y="${fmt(calcY + 19)}" font-size="${fmt(4.5 * tScale)}" font-weight="bold" font-family="${font}" fill="#CC0000" text-anchor="end">${fmt(data.bestRemainingBudget)} 円</text>`,
       );
     }
   } else {
     // basic または discount 課題
     elements.push(
-      `<text x="8" y="${fmt(taskTop + 5)}" font-size="${fmt(4.2 * (textScale / 100))}" font-weight="bold" font-family="${font}" fill="${ink}">【 買い物リスト 】</text>`,
+      `<text x="8" y="${fmt(taskTop + 5)}" font-size="${fmt(4.2 * tScale)}" font-weight="bold" font-family="${font}" fill="${ink}">【 買い物リスト 】</text>`,
     );
 
     let listY = taskTop + 12;
@@ -344,7 +433,7 @@ function renderShopping(
       const qtyText = item.quantity > 1 ? ` × ${item.quantity}個` : '';
       elements.push(
         `<rect x="10" y="${fmt(listY)}" width="${fmt(bodyW - 20)}" height="11" fill="#FFFFFF" stroke="${ink}" stroke-width="0.3" rx="0.4" />`,
-        `<text x="14" y="${fmt(listY + 7)}" font-size="${fmt(3.8 * (textScale / 100))}" font-family="${font}" fill="${ink}">・${esc(item.item.name)}${qtyText} <tspan fill="#CC0000" font-weight="bold">${discountText}</tspan></text>`,
+        `<text x="14" y="${fmt(listY + 7)}" font-size="${fmt(3.8 * tScale)}" font-family="${font}" fill="${ink}">・${esc(item.item.name)}${qtyText} <tspan fill="#CC0000" font-weight="bold">${discountText}</tspan></text>`,
       );
 
       if (isAnswer) {
@@ -360,11 +449,11 @@ function renderShopping(
           calcFormula = `${item.subtotal}円`;
         }
         elements.push(
-          `<text x="${fmt(bodyW - 16)}" y="${fmt(listY + 7)}" font-size="${fmt(3.6 * (textScale / 100))}" font-weight="bold" font-family="${font}" fill="#CC0000" text-anchor="end">${esc(calcFormula)}</text>`,
+          `<text x="${fmt(bodyW - 16)}" y="${fmt(listY + 7)}" font-size="${fmt(3.6 * tScale)}" font-weight="bold" font-family="${font}" fill="#CC0000" text-anchor="end">${esc(calcFormula)}</text>`,
         );
       } else {
         elements.push(
-          `<text x="${fmt(bodyW - 16)}" y="${fmt(listY + 7)}" font-size="${fmt(3.6 * (textScale / 100))}" font-family="${font}" fill="#999999" text-anchor="end">＿＿＿＿ 円</text>`,
+          `<text x="${fmt(bodyW - 16)}" y="${fmt(listY + 7)}" font-size="${fmt(3.6 * tScale)}" font-family="${font}" fill="#999999" text-anchor="end">＿＿＿＿ 円</text>`,
         );
       }
 
@@ -375,15 +464,15 @@ function renderShopping(
     const payAreaY = listY + 4;
     elements.push(
       `<rect x="10" y="${fmt(payAreaY)}" width="${fmt(bodyW - 20)}" height="32" fill="#FAFAFA" stroke="${ink}" stroke-width="${fmt(baseStroke)}" rx="0.5" />`,
-      `<text x="16" y="${fmt(payAreaY + 8)}" font-size="${fmt(4.0 * (textScale / 100))}" font-family="${font}" fill="${ink}">出したお金（所持金）： <tspan font-weight="bold">${fmt(data.walletAmount)}</tspan> 円</text>`,
-      `<text x="16" y="${fmt(payAreaY + 18)}" font-size="${fmt(4.0 * (textScale / 100))}" font-family="${font}" fill="${ink}">商品の合計金額： ＿＿＿＿＿＿ 円</text>`,
-      `<text x="16" y="${fmt(payAreaY + 27)}" font-size="${fmt(4.0 * (textScale / 100))}" font-family="${font}" fill="${ink}">おつり： ＿＿＿＿＿＿ 円</text>`,
+      `<text x="16" y="${fmt(payAreaY + 8)}" font-size="${fmt(4.0 * tScale)}" font-family="${font}" fill="${ink}">出したお金（所持金）： <tspan font-weight="bold">${fmt(data.walletAmount)}</tspan> 円</text>`,
+      `<text x="16" y="${fmt(payAreaY + 18)}" font-size="${fmt(4.0 * tScale)}" font-family="${font}" fill="${ink}">商品の合計金額： ＿＿＿＿＿＿ 円</text>`,
+      `<text x="16" y="${fmt(payAreaY + 27)}" font-size="${fmt(4.0 * tScale)}" font-family="${font}" fill="${ink}">おつり： ＿＿＿＿＿＿ 円</text>`,
     );
 
     if (isAnswer) {
       elements.push(
-        `<text x="${fmt(bodyW - 35)}" y="${fmt(payAreaY + 18)}" font-size="${fmt(4.5 * (textScale / 100))}" font-weight="bold" font-family="${font}" fill="#CC0000" text-anchor="end">${fmt(data.totalAmount)} 円</text>`,
-        `<text x="${fmt(bodyW - 35)}" y="${fmt(payAreaY + 27)}" font-size="${fmt(4.5 * (textScale / 100))}" font-weight="bold" font-family="${font}" fill="#CC0000" text-anchor="end">${fmt(data.changeAmount)} 円</text>`,
+        `<text x="${fmt(bodyW - 35)}" y="${fmt(payAreaY + 18)}" font-size="${fmt(4.5 * tScale)}" font-weight="bold" font-family="${font}" fill="#CC0000" text-anchor="end">${fmt(data.totalAmount)} 円</text>`,
+        `<text x="${fmt(bodyW - 35)}" y="${fmt(payAreaY + 27)}" font-size="${fmt(4.5 * tScale)}" font-weight="bold" font-family="${font}" fill="#CC0000" text-anchor="end">${fmt(data.changeAmount)} 円</text>`,
       );
     }
   }
@@ -421,9 +510,10 @@ export function renderM10(
       const problems = generatePaymentProblems(ctx, params);
       problemSvg = renderPayment(problems, body.widthMm, body.heightMm, strokeScale, textScale, false);
       answerSvg = renderPayment(problems, body.widthMm, body.heightMm, strokeScale, textScale, true);
-      instruction = params.paymentTask === 'minChange'
-        ? '指定された金額を支払うとき、おつりの枚数が最も少なくなるように硬貨・紙幣に〇をつけましょう。'
-        : '指定された金額ちょうどになるように、硬貨・紙幣に〇をつけましょう。';
+      instruction =
+        params.paymentTask === 'minChange'
+          ? '指定された金額を支払うとき、おつりの枚数が最も少なくなるように硬貨・紙幣に〇をつけましょう。'
+          : '指定された金額ちょうどになるように、硬貨・紙幣に〇をつけましょう。';
       answerInstruction = '【解答】支払いに使用する硬貨（赤丸）および紙幣（赤枠）';
       break;
     }
@@ -432,9 +522,10 @@ export function renderM10(
       const data = generateShoppingData(ctx, params);
       problemSvg = renderShopping(data, body.widthMm, body.heightMm, strokeScale, textScale, false);
       answerSvg = renderShopping(data, body.widthMm, body.heightMm, strokeScale, textScale, true);
-      instruction = data.level === 'budget'
-        ? '上の価格表を見て、予算内で合計金額が最も高くなるように商品を選びましょう。'
-        : '上の価格表を見て、買い物リストの合計金額とおつりを計算しましょう。';
+      instruction =
+        data.level === 'budget'
+          ? '上の価格表を見て、予算内で合計金額が最も高くなるように商品を選びましょう。'
+          : '上の価格表を見て、買い物リストの合計金額とおつりを計算しましょう。';
       answerInstruction = '【解答】計算式および正答';
       break;
     }

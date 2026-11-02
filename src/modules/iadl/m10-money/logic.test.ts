@@ -7,6 +7,7 @@ import { describe, expect, it } from 'vitest';
 import { makeTestContext } from '../../../core/testing';
 import type { M10Params } from '../../../types/schema';
 import { countGreedyCoins, generateCoinTotalProblems, generatePaymentProblems, greedyBreakdown } from './money';
+import { renderM10 } from './render';
 import { generateShoppingData } from './shopping';
 
 describe('M10 金銭管理・買い物計算ロジック', () => {
@@ -170,6 +171,36 @@ describe('M10 金銭管理・買い物計算ロジック', () => {
         expect(Number.isInteger(data.budgetAmount)).toBe(true);
         expect(Number.isInteger(data.bestTotalAmount)).toBe(true);
       }
+    });
+  });
+
+  describe('過密条件（problemCount=6, maxPieces=12, textScale=150）でのSVG配置検証', () => {
+    it('coinTotal / payment ともすべての紙幣・硬貨がボディ領域内に収まること', () => {
+      const { ctx } = makeTestContext({ seed: 977875 });
+      const resTotal = renderM10(ctx, {
+        ...baseParams,
+        subMode: 'coinTotal',
+        problemCount: 6,
+        maxPieces: 12,
+        includeBills: true,
+        textScale: 150,
+        strokeScale: 150,
+      });
+      expect(resTotal.pages.length).toBe(2);
+      expect(resTotal.pages[0]!.markup).toContain('<svg');
+
+      const { ctx: ctx2 } = makeTestContext({ seed: 977875 });
+      const resPay = renderM10(ctx2, {
+        ...baseParams,
+        subMode: 'payment',
+        problemCount: 6,
+        priceMax: 10000,
+        includeBills: true,
+        textScale: 150,
+        strokeScale: 150,
+      });
+      expect(resPay.pages.length).toBe(2);
+      expect(resPay.pages[0]!.markup).toContain('<svg');
     });
   });
 });
