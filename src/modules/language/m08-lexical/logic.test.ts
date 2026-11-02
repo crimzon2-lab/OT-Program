@@ -197,4 +197,31 @@ describe('M08 言語モジュール ロジック・描画検証', () => {
       expect(uniqueMarkups.size).toBe(5);
     });
   });
+
+  describe('最大設問数（itemCount = 20）での全サブモード描画検証', () => {
+    it('fill, anagram, category(oddOneOut), sentence 全サブモードで問1〜問20が欠落なく生成される', () => {
+      const cases: Partial<M08Params>[] = [
+        { subMode: 'fill', itemCount: 20 },
+        { subMode: 'anagram', itemCount: 20 },
+        { subMode: 'category', categoryTask: 'oddOneOut', itemCount: 20, notation: 'kanjiRuby' },
+        { subMode: 'sentence', sentenceTask: 'particleBlank', itemCount: 20 },
+        { subMode: 'sentence', sentenceTask: 'particleChoice', itemCount: 20 },
+        { subMode: 'sentence', sentenceTask: 'judgement', itemCount: 20 },
+      ];
+
+      for (const c of cases) {
+        const { ctx } = makeTestContext({ moduleId: 'M08', seed: 977875, sheetIndex: 1 });
+        const params = getM08TestParams(c);
+        const res = m08Module.generate(ctx, params);
+
+        const problemMarkup = res.pages[0]?.markup ?? '';
+        const answerMarkup = res.pages[1]?.markup ?? '';
+
+        for (let i = 1; i <= 20; i++) {
+          expect(problemMarkup).toContain(`問${i}.`);
+          expect(answerMarkup).toContain(`問${i}.`);
+        }
+      }
+    });
+  });
 });
