@@ -130,6 +130,14 @@
   display: block;
 }
 
+.sheet svg.instruction-sym {
+  display: inline-block;
+  width: 1.15em;
+  height: 1.15em;
+  vertical-align: -0.18em;
+  margin: 0 0.06em;
+}
+
 /* 本文内 HTML テーブル・枠組み用スタイル */
 .sheet table {
   border-collapse: collapse;

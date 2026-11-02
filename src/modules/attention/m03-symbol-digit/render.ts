@@ -90,9 +90,9 @@ function renderKeyTable(
       renderSymbolPath(key.symbol, cx, startY + halfH * 0.5, symSize, strokeScale),
     );
 
-    // 下段：数字
+    // 下段：対応する文字（数字またはひらがな）
     elements.push(
-      `<text x="${fmt(cx)}" y="${fmt(startY + halfH * 1.5)}" text-anchor="middle" dominant-baseline="central" font-size="${fmt(fontSize)}" font-weight="bold" font-family="${TYPOGRAPHY.fontFamily}" fill="#000000">${key.digit}</text>`,
+      `<text x="${fmt(cx)}" y="${fmt(startY + halfH * 1.5)}" text-anchor="middle" dominant-baseline="central" font-size="${fmt(fontSize)}" font-weight="bold" font-family="${TYPOGRAPHY.fontFamily}" fill="#000000">${key.label}</text>`,
     );
   }
 
@@ -193,8 +193,8 @@ export function renderM03(
       const bottomBg = isPrac ? '#f0f0f0' : '#ffffff';
       const bottomRectAnswer = `<rect x="${fmt(cellX)}" y="${fmt(rowY + topH)}" width="${fmt(cellW)}" height="${fmt(bottomH)}" fill="${bottomBg}" stroke="#000000" stroke-width="${fmt(borderW)}" />`;
       const digitSvg = isPrac
-        ? `<text x="${fmt(cx)}" y="${fmt(rowY + topH + bottomH / 2)}" text-anchor="middle" dominant-baseline="central" font-size="${fmt(digitFontSize * 0.9)}" font-family="${TYPOGRAPHY.fontFamily}" fill="#666666">(${cell.digit})</text>`
-        : `<text x="${fmt(cx)}" y="${fmt(rowY + topH + bottomH / 2)}" text-anchor="middle" dominant-baseline="central" font-size="${fmt(digitFontSize)}" font-weight="bold" font-family="${TYPOGRAPHY.fontFamily}" fill="#000000">${cell.digit}</text>`;
+        ? `<text x="${fmt(cx)}" y="${fmt(rowY + topH + bottomH / 2)}" text-anchor="middle" dominant-baseline="central" font-size="${fmt(digitFontSize * 0.9)}" font-family="${TYPOGRAPHY.fontFamily}" fill="#666666">(${cell.label})</text>`
+        : `<text x="${fmt(cx)}" y="${fmt(rowY + topH + bottomH / 2)}" text-anchor="middle" dominant-baseline="central" font-size="${fmt(digitFontSize)}" font-weight="bold" font-family="${TYPOGRAPHY.fontFamily}" fill="#000000">${cell.label}</text>`;
 
       answerCellsSvg.push(
         `<g class="cell" data-row="${r}" data-col="${c}">\n      ${topRect}\n      ${symSvg}\n      ${bottomRectAnswer}\n      ${digitSvg}\n    </g>`,
@@ -203,13 +203,14 @@ export function renderM03(
   }
 
   // 4) 教示文
+  const targetWord = data.targetType === 'digit' ? '数字' : 'ひらがな';
   const problemInstruction =
-    '上の対応表をよく見て、下のマスの上段にある記号と同じ記号の下の空欄に、対応する数字を書いてください。';
+    `上の対応表をよく見て、下のマスの上段にある記号と同じ記号の下の空欄に、対応する${targetWord}を書いてください。`;
 
   const answerInstruction = [
     '【正答一覧】',
     `本課題マス数（満点）：${data.mainCells} 点（練習 ${data.practiceCells} マスを除く）`,
-    '各マスの下段に正答数字を記載しています。（　）付きの薄いマスは練習マスです。',
+    `各マスの下段に正答${targetWord}を記載しています。（　）付きの薄いマスは練習マスです。`,
   ].join('\n');
 
   // 問題用紙 SVG

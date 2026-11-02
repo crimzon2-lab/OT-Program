@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { runJob } from '../../../core/generator';
 import { makeTestContext } from '../../../core/testing';
-import { getSdmtSymbols } from '../../../data/symbols';
+import { getSdmtSymbols, SDMT_SYMBOL_FAMILIES } from '../../../data/symbols';
 import type { CommonParams, M03Params } from '../../../types/schema';
 import { m03Module, m03SymbolDigitModule } from './index';
 import { generateM03Data } from './logic';
@@ -184,5 +184,49 @@ describe('M03 符号変換課題 logic & render', () => {
     expect(jobResult.pages[1]!.body.pageRole).toBe('problem');
     expect(jobResult.pages[2]!.body.pageRole).toBe('answer');
     expect(jobResult.pages[3]!.body.pageRole).toBe('answer');
+  });
+
+  it('ひらがな変換モード（hiragana / hiraganaRandom）で対応表・解答・教示文がひらがなになること', () => {
+    const { ctx: ctxFixedHira } = makeTestContext({ moduleId: 'M03', seed: 42, orientation: 'portrait' });
+    const resHira = m03SymbolDigitModule.generate(ctxFixedHira, {
+      ...defaultParams,
+      targetType: 'hiragana',
+      pairCount: 8,
+    });
+
+    expect(resHira.pages[0]!.instruction).toContain('対応するひらがなを書いてください');
+    expect(resHira.pages[0]!.markup).toContain('>あ</text>');
+    expect(resHira.pages[0]!.markup).toContain('>き</text>');
+    expect(resHira.pages[1]!.markup).toMatch(/\([あ-け]\)/);
+
+    const { ctx: ctxRandHira } = makeTestContext({ moduleId: 'M03', seed: 42, orientation: 'portrait' });
+    const dataRand = generateM03Data(ctxRandHira, {
+      ...defaultParams,
+      targetType: 'hiraganaRandom',
+      pairCount: 9,
+    });
+    const uniqueLabels = new Set(dataRand.keys.map((k) => k.label));
+    expect(uniqueLabels.size).toBe(9);
+  });
+
+  it('選定される記号がすべて異なる形状ファミリーから選ばれ、似た記号が混在しないこと', () => {
+    const familyBySymId = new Map<string, number>();
+    SDMT_SYMBOL_FAMILIES.forEach((fam, idx) => {
+      for (const id of fam) {
+        familyBySymId.set(id, idx);
+      }
+    });
+
+    for (const seed of [1, 42, 777, 977875]) {
+      const { ctx } = makeTestContext({ moduleId: 'M03', seed, orientation: 'portrait' });
+      const data = generateM03Data(ctx, { ...defaultParams, pairCount: 9, shuffleMapping: true });
+      const usedFamilies = new Set<number>();
+      for (const k of data.keys) {
+        const famIdx = familyBySymId.get(k.symbol.id);
+        expect(famIdx).toBeDefined();
+        expect(usedFamilies.has(famIdx!)).toBe(false);
+        usedFamilies.add(famIdx!);
+      }
+    }
   });
 });

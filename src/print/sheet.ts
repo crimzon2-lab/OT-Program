@@ -3,6 +3,7 @@
  * ARCHITECTURE.md §3.1, §3.6 準拠
  */
 
+import { SYMBOLS } from '../data/symbols';
 import {
   CALIBRATION_BAR_MM,
   TYPOGRAPHY,
@@ -11,6 +12,26 @@ import {
 } from '../types/schema';
 import { esc, fmt } from '../utils/html';
 import { renderHeaderHtml } from './header';
+
+const SYMBOL_MAP = new Map(SYMBOLS.map((s) => [s.id, s]));
+
+/**
+ * 教示文内の [[sym:sym-xxx]] トークンをインライン SVG アイコンに置換する。
+ */
+function replaceInlineSymbolTokens(escapedHtml: string): string {
+  if (!escapedHtml.includes('[[sym:')) {
+    return escapedHtml;
+  }
+  const replaced = escapedHtml.replace(/\[\[sym:([a-z0-9-]+)\]\]/g, (match, id: string) => {
+    const sym = SYMBOL_MAP.get(id);
+    if (!sym) return match;
+    const pathAttrs = sym.filled
+      ? 'fill="#000000" stroke="none"'
+      : 'fill="none" stroke="#000000" stroke-width="0.95" stroke-linecap="round" stroke-linejoin="round"';
+    return `<svg class="instruction-sym" viewBox="0 0 10 10" aria-label="${esc(sym.name)}"><path d="${sym.path}" ${pathAttrs} /></svg>`;
+  });
+  return `<span class="sheet__instruction-text">${replaced}</span>`;
+}
 
 /**
  * 教示文帯の HTML を生成する。
@@ -28,7 +49,7 @@ export function renderInstructionHtml(
 
   const normalized = instruction.replace(/\r\n/g, '\n');
   const lines = normalized.split('\n');
-  const escapedHtml = lines.map(esc).join('<br />');
+  const escapedHtml = replaceInlineSymbolTokens(lines.map(esc).join('<br />'));
 
   const baseSize = 4.2 * (textScale / 100);
   const bandWidth = orientation === 'portrait' ? 186 : 273;
@@ -36,7 +57,8 @@ export function renderInstructionHtml(
 
   let totalLines = 0;
   for (const line of lines) {
-    const len = Array.from(line).length;
+    const visualLine = line.replace(/\[\[sym:[a-z0-9-]+\]\]/g, '〇');
+    const len = Array.from(visualLine).length;
     totalLines += Math.max(1, Math.ceil(len / charsPerLine));
   }
 

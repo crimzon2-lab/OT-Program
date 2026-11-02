@@ -111,13 +111,13 @@ export function renderM01(
   const bodyH = ctx.body.heightMm;
 
   const targetNames = data.targets
-    .map((t) => (typeof t === 'string' ? `「${t}」` : `「${t.name}」`))
+    .map((t) => (typeof t === 'string' ? `「${t}」` : `「[[sym:${t.id}]]」`))
     .join('、');
 
   // 問題用紙の教示文
   const problemInstruction = params.showTargetSample
-    ? `次の刺激の中から、見本と同じ${targetNames}をすべて見つけて〇をつけてください。`
-    : `次の刺激の中から、${targetNames}をすべて見つけて〇をつけてください。`;
+    ? `この中から、見本と同じ${targetNames}をすべて見つけて〇をつけてください。`
+    : `この中から、${targetNames}をすべて見つけて〇をつけてください。`;
 
   // 解答用紙の教示文（ターゲット一覧＋4象限集計）
   const answerInstruction = [

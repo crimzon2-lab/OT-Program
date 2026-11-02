@@ -3,17 +3,20 @@
  * ARCHITECTURE.md §8, §9 準拠
  */
 
-import { getSdmtSymbols } from '../../../data/symbols';
-import type {
-  CommonParams,
-  GenerateContext,
-  M03Params,
-  SymbolDef,
+import { selectDistinctSdmtSymbols } from '../../../data/symbols';
+import {
+  STIMULUS_CHARSETS,
+  type CommonParams,
+  type GenerateContext,
+  type M03Params,
+  type SymbolDef,
 } from '../../../types/schema';
+import type { M03ExtendedParams, M03TargetType } from './index';
 
 export interface SymbolKey {
   readonly symbol: SymbolDef;
   readonly digit: number; // 1..pairCount
+  readonly label: string; // '1'..'9' または 'あ'..'け' 等
 }
 
 export interface GridCell {
@@ -21,6 +24,7 @@ export interface GridCell {
   readonly col: number;
   readonly symbol: SymbolDef;
   readonly digit: number;
+  readonly label: string;
   readonly isPractice: boolean;
 }
 
@@ -32,27 +36,44 @@ export interface M03ProblemData {
   readonly practiceCells: number;
   readonly totalCells: number;
   readonly mainCells: number;
+  readonly targetType: M03TargetType;
 }
+
+const FIXED_HIRAGANA_LABELS = ['あ', 'い', 'う', 'え', 'お', 'か', 'き', 'く', 'け'] as const;
 
 /**
  * M03（符号変換課題）のキー対応表および問題グリッドを生成する。
  */
 export function generateM03Data(
   ctx: GenerateContext,
-  params: M03Params & CommonParams,
+  params: (M03Params | M03ExtendedParams) & CommonParams,
 ): M03ProblemData {
-  const sdmtPool = getSdmtSymbols();
   const pairCount = Math.max(6, Math.min(9, params.pairCount));
-  const selectedSymbols = sdmtPool.slice(0, pairCount);
+  const targetType: M03TargetType =
+    (params as M03ExtendedParams).targetType ?? 'digit';
 
-  // 1) キー対応表の作成
-  const mappingSymbols = params.shuffleMapping
-    ? ctx.rng.fork('key-mapping').shuffle([...selectedSymbols])
-    : [...selectedSymbols];
+  // 1) 互いに形が似ていない記号を形状ファミリー単位で抽出
+  const mappingSymbols = selectDistinctSdmtSymbols(
+    ctx.rng.fork('key-mapping'),
+    pairCount,
+    params.shuffleMapping,
+  );
+
+  // 変換先ラベル（数字 1〜9 / ひらがな あ〜け / ランダムひらがな）の決定
+  let targetLabels: string[];
+  if (targetType === 'hiragana') {
+    targetLabels = FIXED_HIRAGANA_LABELS.slice(0, pairCount);
+  } else if (targetType === 'hiraganaRandom') {
+    const hiraPool = Array.from(STIMULUS_CHARSETS.hiragana);
+    targetLabels = ctx.rng.fork('target-chars').sample(hiraPool, pairCount);
+  } else {
+    targetLabels = Array.from({ length: pairCount }, (_, i) => String(i + 1));
+  }
 
   const keys: SymbolKey[] = mappingSymbols.map((symbol, i) => ({
     symbol,
     digit: i + 1,
+    label: targetLabels[i] ?? String(i + 1),
   }));
 
   const rows = params.rows;
@@ -107,6 +128,7 @@ export function generateM03Data(
           col: c,
           symbol: item.symbol,
           digit: item.digit,
+          label: item.label,
           isPractice,
         });
       } else {
@@ -139,6 +161,7 @@ export function generateM03Data(
                 col: pc,
                 symbol: currentItem.symbol,
                 digit: currentItem.digit,
+                label: currentItem.label,
                 isPractice: pastCell.isPractice,
               };
 
@@ -147,6 +170,7 @@ export function generateM03Data(
                 col: c,
                 symbol: pastCell.symbol,
                 digit: pastCell.digit,
+                label: pastCell.label,
                 isPractice,
               });
 
@@ -163,6 +187,7 @@ export function generateM03Data(
             col: c,
             symbol: currentItem.symbol,
             digit: currentItem.digit,
+            label: currentItem.label,
             isPractice,
           });
         }
@@ -178,5 +203,6 @@ export function generateM03Data(
     practiceCells,
     totalCells,
     mainCells,
+    targetType,
   };
 }

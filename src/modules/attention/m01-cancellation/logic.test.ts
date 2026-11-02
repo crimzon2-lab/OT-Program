@@ -193,7 +193,7 @@ describe('M01 抹消課題 logic & render', () => {
     expect(dataScale.effectiveCharSize).toBe(12); // 8 * 1.5 = 12
   });
 
-  it('showTargetSample: false のとき見本帯が描画されず、教示文にターゲット名が含まれること', () => {
+  it('showTargetSample: false のとき見本帯が描画されず、教示文に「この中から」とターゲットが含まれること', () => {
     const { ctx } = makeTestContext({ moduleId: 'M01', seed: 707, orientation: 'landscape' });
     const res = m01CancellationModule.generate(ctx, {
       ...defaultParams,
@@ -201,7 +201,24 @@ describe('M01 抹消課題 logic & render', () => {
     });
 
     expect(res.pages[0]!.markup).not.toContain('class="target-sample-band"');
+    expect(res.pages[0]!.instruction).toContain('この中から、');
+    expect(res.pages[0]!.instruction).not.toContain('刺激の中から');
     expect(res.pages[0]!.instruction).toMatch(/「.+」をすべて見つけて/);
+
+    // 幾何学記号モードでは文字名ではなく記号トークン [[sym:...]] が教示文に使われ、シートHTMLでインラインSVGになること
+    const jobShape = runJob(
+      {
+        moduleId: 'M01',
+        params: { ...defaultParams, stimulusType: 'shape', showTargetSample: false },
+        seed: 294533,
+        batchCount: 1,
+        outputMode: 'problemOnly',
+        answerOrder: 'grouped',
+      },
+      m01Module,
+    );
+    expect(jobShape.pages[0]!.body.instruction).toContain('この中から、');
+    expect(jobShape.pages[0]!.body.instruction).toContain('[[sym:sym-');
   });
 
   it('runJob 統合テスト: 問題・解答シートが正常に組み立てられること', () => {

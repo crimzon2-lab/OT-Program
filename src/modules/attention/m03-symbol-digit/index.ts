@@ -16,7 +16,29 @@ import {
 import { generateM03Data } from './logic';
 import { renderM03 } from './render';
 
-export const m03ParamSchema: ParamSchema<M03Params> = [
+export type M03TargetType = 'digit' | 'hiragana' | 'hiraganaRandom';
+
+export type M03ExtendedParams = M03Params & {
+  targetType?: M03TargetType;
+};
+
+type M03SchemaParams = M03Params & {
+  targetType: M03TargetType;
+};
+
+export const m03ParamSchema: ParamSchema<M03SchemaParams> = [
+  {
+    code: 6,
+    key: 'targetType',
+    label: '変換する文字種',
+    kind: 'select',
+    options: [
+      { value: 'digit', label: '数字（1〜9）' },
+      { value: 'hiragana', label: 'ひらがな（あ〜け）' },
+      { value: 'hiraganaRandom', label: 'ひらがな（ランダム）' },
+    ],
+    default: 'digit',
+  },
   {
     code: 1,
     key: 'pairCount',
@@ -66,17 +88,17 @@ export const m03ParamSchema: ParamSchema<M03Params> = [
   },
 ];
 
-export const m03SymbolDigitModule: TaskModule<M03Params> = {
+export const m03SymbolDigitModule: TaskModule<M03ExtendedParams> = {
   id: 'M03',
   domain: 'attention',
   title: '符号変換課題',
   shortTitle: '符号変換',
   description:
-    '上部の対応表を参照しながら記号に対応する数字を素早く正確に書き込む処理速度・視覚走査・作業記憶課題（SDMT様）。',
-  paramSchema: m03ParamSchema,
+    '上部の対応表を参照しながら記号に対応する数字やひらがなを素早く正確に書き込む処理速度・視覚走査・作業記憶課題（SDMT様）。',
+  paramSchema: m03ParamSchema as unknown as ParamSchema<M03ExtendedParams>,
   orientation: () => 'portrait',
   generate: (ctx: GenerateContext, params): GenerateResult => {
-    const fullParams = params as M03Params & CommonParams;
+    const fullParams = params as M03ExtendedParams & CommonParams;
     const data = generateM03Data(ctx, fullParams);
     return renderM03(ctx, fullParams, data);
   },
