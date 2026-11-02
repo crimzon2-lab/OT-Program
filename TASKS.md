@@ -776,7 +776,7 @@
 
 ## Phase 3：D. 失語・言語機能領域マスターデータ＆モジュール 8（Task 47 〜 Task 56）
 
-### - [ ] Task 47: 語彙カテゴリ定義（`categories.ts`）と語彙データ Group 1（`furniture`, `kitchen`, `clothing` 計60語以上）の作成
+### - [x] Task 47: 語彙カテゴリ定義（`categories.ts`）と語彙データ Group 1（`furniture`, `kitchen`, `clothing` 計60語以上）の作成
 - **対象ファイルパス**:
   - `src/data/vocabulary/categories.ts`（新規）
   - `src/data/vocabulary/group1.ts`（新規）
@@ -793,7 +793,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit`
 
-### - [ ] Task 48: 語彙データ Group 2（`food`, `stationery`, `vehicle` 計60語以上）の作成
+### - [x] Task 48: 語彙データ Group 2（`food`, `stationery`, `vehicle` 計60語以上）の作成
 - **対象ファイルパス**:
   - `src/data/vocabulary/group2.ts`（新規）
 - **参照する型・仕様**:
@@ -808,7 +808,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit`
 
-### - [ ] Task 49: 語彙データ Group 3（`body`, `nature`, `appliance` 計60語以上）の作成
+### - [x] Task 49: 語彙データ Group 3（`body`, `nature`, `appliance` 計60語以上）の作成
 - **対象ファイルパス**:
   - `src/data/vocabulary/group3.ts`（新規）
 - **参照する型・仕様**:
@@ -823,7 +823,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit`
 
-### - [ ] Task 50: 語彙データ Group 4（`animal`, `plant`, `place` 計60語以上）と全240語統合・整合性テストの作成
+### - [x] Task 50: 語彙データ Group 4（`animal`, `plant`, `place` 計60語以上）と全240語統合・整合性テストの作成
 - **対象ファイルパス**:
   - `src/data/vocabulary/group4.ts`（新規）
   - `src/data/vocabulary/index.ts`（新規）
@@ -845,7 +845,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit && npx vitest run src/data/vocabulary/vocabulary.test.ts`
 
-### - [ ] Task 51: 短文データ（助詞補充 `particle.ts`：60文以上）の作成
+### - [x] Task 51: 短文データ（助詞補充 `particle.ts`：60文以上）の作成
 - **対象ファイルパス**:
   - `src/data/sentences/particle.ts`（新規）
 - **参照する型・仕様**:
@@ -858,7 +858,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit`
 
-### - [ ] Task 52: 短文データ（意味正誤判定 `judgement.ts`：60文以上）と短文整合性テストの作成
+### - [x] Task 52: 短文データ（意味正誤判定 `judgement.ts`：60文以上）と短文整合性テストの作成
 - **対象ファイルパス**:
   - `src/data/sentences/judgement.ts`（新規）
   - `src/data/sentences/sentences.test.ts`（新規）
@@ -874,7 +874,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit && npx vitest run src/data/sentences/sentences.test.ts`
 
-### - [ ] Task 53: モジュール8 共通ヘルパー（`common.ts`）とサブモードA（単語穴埋め `fill.ts`）の実装
+### - [x] Task 53: モジュール8 共通ヘルパー（`common.ts`）とサブモードA（単語穴埋め `fill.ts`）の実装
 - **対象ファイルパス**:
   - `src/modules/language/m08-lexical/common.ts`（新規）
   - `src/modules/language/m08-lexical/fill.ts`（新規）
@@ -898,7 +898,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit`
 
-### - [ ] Task 54: モジュール8 サブモードB（アナグラム `anagram.ts`）とサブモードC（意味カテゴリ分類 `category.ts`）の実装
+### - [x] Task 54: モジュール8 サブモードB（アナグラム `anagram.ts`）とサブモードC（意味カテゴリ分類 `category.ts`）の実装
 - **対象ファイルパス**:
   - `src/modules/language/m08-lexical/anagram.ts`（新規）
   - `src/modules/language/m08-lexical/category.ts`（新規）
@@ -918,7 +918,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit`
 
-### - [ ] Task 55: モジュール8 サブモードD（短文課題 `sentence.ts`）と HTML 組版描画（`render.ts`）の実装
+### - [x] Task 55: モジュール8 サブモードD（短文課題 `sentence.ts`）と HTML 組版描画（`render.ts`）の実装
 - **対象ファイルパス**:
   - `src/modules/language/m08-lexical/sentence.ts`（新規）
   - `src/modules/language/m08-lexical/render.ts`（新規）
@@ -939,7 +939,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit`
 
-### - [ ] Task 56: モジュール8 モジュール定義・単体テスト・レジストリ登録
+### - [x] Task 56: モジュール8 モジュール定義・単体テスト・レジストリ登録
 - **対象ファイルパス**:
   - `src/modules/language/m08-lexical/index.ts`（新規）
   - `src/modules/language/m08-lexical/logic.test.ts`（新規）

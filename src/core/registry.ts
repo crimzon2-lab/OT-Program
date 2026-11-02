@@ -7,6 +7,7 @@ import { m01Module } from '../modules/attention/m01-cancellation';
 import { m02Module } from '../modules/attention/m02-tmt';
 import { m03Module } from '../modules/attention/m03-symbol-digit';
 import { m04Module } from '../modules/attention/m04-kana-pickup';
+import { m08Module } from '../modules/language/m08-lexical';
 import { m07Module } from '../modules/memory/m07-serial-nback';
 import { m05Module } from '../modules/visuospatial/m05-lines';
 import { m06Module } from '../modules/visuospatial/m06-dots-matrix';
@@ -23,6 +24,7 @@ export const ALL_MODULES: readonly AnyTaskModule[] = [
   m05Module,
   m06Module,
   m07Module,
+  m08Module,
 ];
 
 const testModules = new Map<ModuleId, AnyTaskModule>();
