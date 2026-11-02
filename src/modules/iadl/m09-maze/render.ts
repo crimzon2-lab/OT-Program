@@ -44,7 +44,7 @@ function renderLabelAndArrow(
     if (isStart) {
       // 外側から左開口部へ向かう矢印（右向き）
       // [テキスト] -> [開口]
-      textX = openX - 8;
+      textX = openX - 6.0;
       textY = openY;
       textAnchor = 'end';
       const tipX = openX - 0.8;
@@ -54,11 +54,11 @@ function renderLabelAndArrow(
     } else {
       // 左開口部から外側へ向かう矢印（左向き）
       // [テキスト] <- [開口]
-      textX = openX - 9;
+      textX = openX - 6.5;
       textY = openY;
       textAnchor = 'end';
-      const tipX = openX - 5.5;
-      const baseEndX = openX - 1.5;
+      const tipX = openX - 5.0;
+      const baseEndX = openX - 1.2;
       arrowPoints = `${fmt(tipX)},${fmt(openY)} ${fmt(baseEndX)},${fmt(openY - arrowSize)} ${fmt(baseEndX)},${fmt(openY + arrowSize)}`;
       elements.push(`<polygon points="${arrowPoints}" fill="${TYPOGRAPHY.inkColor}" />`);
     }
@@ -66,7 +66,7 @@ function renderLabelAndArrow(
     if (isStart) {
       // 外側から右開口部へ向かう矢印（左向き）
       // [開口] <- [テキスト]
-      textX = openX + 8;
+      textX = openX + 6.0;
       textY = openY;
       textAnchor = 'start';
       const tipX = openX + 0.8;
@@ -76,11 +76,11 @@ function renderLabelAndArrow(
     } else {
       // 右開口部から外側へ向かう矢印（右向き）
       // [開口] -> [テキスト]
-      textX = openX + 9;
+      textX = openX + 6.5;
       textY = openY;
       textAnchor = 'start';
-      const tipX = openX + 5.5;
-      const baseEndX = openX + 1.5;
+      const tipX = openX + 5.0;
+      const baseEndX = openX + 1.2;
       arrowPoints = `${fmt(tipX)},${fmt(openY)} ${fmt(baseEndX)},${fmt(openY - arrowSize)} ${fmt(baseEndX)},${fmt(openY + arrowSize)}`;
       elements.push(`<polygon points="${arrowPoints}" fill="${TYPOGRAPHY.inkColor}" />`);
     }
@@ -136,7 +136,8 @@ export function renderMazeSvg(
 ): string {
   const N = maze.gridSize;
   const strokeW = (TYPOGRAPHY.baseStrokeMm * 1.5 * strokeScale) / 100;
-  const cellMm = Math.min(bodyW - 24, bodyH - 16) / N;
+  // 縦向きでも左右にスタート・ゴールラベル用の余白（片側26mm以上）を確保する
+  const cellMm = Math.min(bodyW - 52, bodyH - 16) / N;
   const mazeW = cellMm * N;
   const mazeH = cellMm * N;
   const originX = (bodyW - mazeW) / 2;
@@ -191,7 +192,11 @@ export function renderMazeSvg(
   const startCoord = getOpenCoord(maze.start, maze.startEdge);
   const goalCoord = getOpenCoord(maze.goal, maze.goalEdge);
 
-  const labelFontSize = Math.max(3.2, Math.min(5.0, cellMm * 0.55)) * (textScale / 100);
+  // 文字倍率を上げても左右余白（26mm）からはみ出さないよう上限 4.6mm にクランプ
+  const labelFontSize = Math.min(
+    4.6,
+    Math.max(3.0, Math.min(4.5, cellMm * 0.5)) * (textScale / 100),
+  );
 
   const startMarkerSvg = renderLabelAndArrow(
     'スタート',

@@ -210,14 +210,14 @@ function buildCalendarConditionsHtml(
   const items = prob.conditions
     .map(
       (c, idx) =>
-        `<li style="margin-bottom: 3px; line-height: 1.3;">${idx + 1}. ${esc(c.text)}</li>`
+        `<li style="margin-bottom: 3px; line-height: 1.35;">${idx + 1}. ${esc(c.text)}</li>`
     )
     .join('');
 
   return `
 <div style="border: 1px solid #666; border-radius: 4px; padding: 6px 10px; background: #fff;">
   <div style="font-weight: bold; margin-bottom: 4px; border-bottom: 1px solid #ccc; padding-bottom: 2px;">【予定の条件】</div>
-  <ol style="margin: 0; padding-left: 18px; font-size: 9.5pt;">
+  <ol style="margin: 0; padding-left: 2px; list-style: none; font-size: 9.5pt;">
     ${items}
   </ol>
 </div>
@@ -393,9 +393,9 @@ function buildTimetableConditionsHtml(
   return `
 <div style="border: 1px solid #666; border-radius: 4px; padding: 6px 8px; background: #fff; flex: 1; min-height: 0; overflow: hidden;">
   <div style="font-weight: bold; margin-bottom: 4px; font-size: 9.5pt;">【スケジュール条件】</div>
-  <ul style="margin: 0; padding-left: 18px; font-size: 8.5pt;">
+  <ol style="margin: 0; padding-left: 2px; list-style: none; font-size: 8.5pt;">
     ${items}
-  </ul>
+  </ol>
 </div>
   `.trim();
 }
