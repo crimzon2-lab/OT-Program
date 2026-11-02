@@ -3,12 +3,21 @@
  * ARCHITECTURE.md §1 準拠
  */
 
+import { m01Module } from '../modules/attention/m01-cancellation';
+import { m02Module } from '../modules/attention/m02-tmt';
+import { m03Module } from '../modules/attention/m03-symbol-digit';
+import { m04Module } from '../modules/attention/m04-kana-pickup';
 import type { AnyTaskModule, DomainId, ModuleId } from '../types/schema';
 
 /**
  * 本番用全モジュール一覧（Phase 1〜4 で順次登録される）
  */
-export const ALL_MODULES: readonly AnyTaskModule[] = [];
+export const ALL_MODULES: readonly AnyTaskModule[] = [
+  m01Module,
+  m02Module,
+  m03Module,
+  m04Module,
+];
 
 const testModules = new Map<ModuleId, AnyTaskModule>();
 

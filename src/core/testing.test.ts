@@ -52,34 +52,42 @@ describe('src/core/testing.ts and registry.ts', () => {
 
   describe('registry', () => {
     const dummyModule: AnyTaskModule = {
-      id: 'M01',
-      domain: 'attention',
-      title: '抹消課題',
-      shortTitle: '抹消',
+      id: 'M05',
+      domain: 'visuospatial',
+      title: 'ダミー課題',
+      shortTitle: 'ダミー',
       description: 'テスト説明',
       paramSchema: [],
       orientation: () => 'portrait',
       generate: () => ({ pages: [] }),
     };
 
+    it('contains Phase 1 modules in ALL_MODULES', () => {
+      expect(ALL_MODULES.length).toBeGreaterThanOrEqual(4);
+      expect(getModule('M01')?.title).toBe('抹消課題');
+      expect(getModule('M02')?.title).toBe('TMT様課題');
+      expect(getModule('M03')?.title).toBe('符号変換課題');
+      expect(getModule('M04')?.title).toBe('仮名拾い課題');
+      expect(getModulesByDomain('attention').length).toBeGreaterThanOrEqual(4);
+    });
+
     it('allows registering and getting test modules, and cleans up with unregister / reset', () => {
-      expect(ALL_MODULES).toEqual([]);
-      expect(getModule('M01')).toBeUndefined();
+      expect(getModule('M05')).toBeUndefined();
 
       const unregister = registerModuleForTest(dummyModule);
-      expect(getModule('M01')).toBe(dummyModule);
-      expect(getModulesByDomain('attention')).toContain(dummyModule);
+      expect(getModule('M05')).toBe(dummyModule);
+      expect(getModulesByDomain('visuospatial')).toContain(dummyModule);
 
       // Call unregister
       unregister();
-      expect(getModule('M01')).toBeUndefined();
+      expect(getModule('M05')).toBeUndefined();
     });
 
     it('cleans up via resetRegistryForTest', () => {
       registerModuleForTest(dummyModule);
-      expect(getModule('M01')).toBe(dummyModule);
+      expect(getModule('M05')).toBe(dummyModule);
       resetRegistryForTest();
-      expect(getModule('M01')).toBeUndefined();
+      expect(getModule('M05')).toBeUndefined();
     });
   });
 });

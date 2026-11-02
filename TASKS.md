@@ -554,7 +554,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit && npx vitest run src/data/passages/passages.test.ts`
 
-### - [ ] Task 34: モジュール4（仮名拾い・二重課題）行折り返し・禁則処理レイアウト（`layout.ts`）の実装
+### - [x] Task 34: モジュール4（仮名拾い・二重課題）行折り返し・禁則処理レイアウト（`layout.ts`）の実装
 - **対象ファイルパス**:
   - `src/modules/attention/m04-kana-pickup/layout.ts`（新規）
   - `src/modules/attention/m04-kana-pickup/layout.test.ts`（新規）
@@ -570,7 +570,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit && npx vitest run src/modules/attention/m04-kana-pickup/layout.test.ts`
 
-### - [ ] Task 35: モジュール4（仮名拾い・二重課題）生成ロジック（`logic.ts`）の実装
+### - [x] Task 35: モジュール4（仮名拾い・二重課題）生成ロジック（`logic.ts`）の実装
 - **対象ファイルパス**:
   - `src/modules/attention/m04-kana-pickup/logic.ts`（新規）
 - **参照する型・仕様**:
@@ -592,7 +592,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit`
 
-### - [ ] Task 36: モジュール4（仮名拾い・二重課題）SVG 描画とモジュール定義の実装
+### - [x] Task 36: モジュール4（仮名拾い・二重課題）SVG 描画とモジュール定義の実装
 - **対象ファイルパス**:
   - `src/modules/attention/m04-kana-pickup/render.ts`（新規）
   - `src/modules/attention/m04-kana-pickup/index.ts`（新規）
@@ -611,7 +611,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit`
 
-### - [ ] Task 37: モジュール4 単体テストと A.注意領域（M01〜M04）レジストリ統合
+### - [x] Task 37: モジュール4 単体テストと A.注意領域（M01〜M04）レジストリ統合
 - **対象ファイルパス**:
   - `src/modules/attention/m04-kana-pickup/logic.test.ts`（新規）
   - `src/core/registry.ts`（編集）
