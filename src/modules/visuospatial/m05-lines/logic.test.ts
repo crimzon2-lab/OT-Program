@@ -2,7 +2,7 @@ import { describe, expect, it } from 'vitest';
 import { makeTestContext } from '../../../core/testing';
 import { ANSWER_STYLE, type CommonParams, type M05Params } from '../../../types/schema';
 import { m05LinesModule } from './index';
-import { generateM05Data } from './logic';
+import { generateM05Data, segmentDistance } from './logic';
 
 const defaultCancellationParams: M05Params & CommonParams = {
   subMode: 'cancellation',
@@ -131,6 +131,40 @@ describe('M05 線分抹消・線分二等分 logic & render', () => {
       expect(res2.pages.length).toBe(2);
       expect(res1.pages[0]!.markup).toBe(res2.pages[0]!.markup);
       expect(res1.pages[1]!.markup).toBe(res2.pages[1]!.markup);
+    });
+
+    it('最大密度・最大線分長（linesPerCell=6, lineLengthMm=30）でも線分同士が一切交差・重複しないこと', () => {
+      for (const orientation of ['landscape', 'portrait'] as const) {
+        for (const centerPractice of [false, true]) {
+          for (const seed of [977875, 42, 12345]) {
+            const { ctx } = makeTestContext({
+              moduleId: 'M05',
+              seed,
+              orientation,
+            });
+            const data = generateM05Data(ctx, {
+              ...defaultCancellationParams,
+              linesPerCell: 6,
+              lineLengthMm: 30,
+              centerPractice,
+              orientation,
+            });
+
+            expect(data.subMode).toBe('cancellation');
+            if (data.subMode === 'cancellation') {
+              const lines = data.lines;
+              for (let i = 0; i < lines.length; i++) {
+                for (let j = i + 1; j < lines.length; j++) {
+                  const a = lines[i]!;
+                  const b = lines[j]!;
+                  const d = segmentDistance(a.x1, a.y1, a.x2, a.y2, b.x1, b.y1, b.x2, b.y2);
+                  expect(d).toBeGreaterThanOrEqual(2.0);
+                }
+              }
+            }
+          }
+        }
+      }
     });
   });
 
