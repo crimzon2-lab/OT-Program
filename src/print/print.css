@@ -41,6 +41,50 @@
   padding-bottom: 1.5mm;
 }
 
+.sheet__header-row--top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4mm;
+  line-height: 1.2;
+}
+
+.sheet__title-box {
+  display: flex;
+  align-items: baseline;
+  gap: 3mm;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.sheet__title {
+  font-size: 5mm;
+  font-weight: bold;
+  white-space: nowrap;
+}
+
+.sheet__sub-title {
+  font-size: 3.5mm;
+  font-weight: normal;
+  color: #333333;
+  white-space: nowrap;
+}
+
+.sheet__seed-code {
+  font-size: 2.6mm;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+  color: #333333;
+  white-space: nowrap;
+  flex-shrink: 0;
+}
+
+.sheet__header-row--bottom {
+  font-size: 3.3mm;
+  line-height: 1.2;
+  white-space: nowrap;
+  overflow: hidden;
+}
+
 /* 教示文帯 (12mm) */
 .sheet__instruction {
   flex: none;

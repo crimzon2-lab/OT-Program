@@ -145,12 +145,15 @@ function buildCalendarTable(
       ? ([1, 2, 3, 4, 5, 6, 0] as const)
       : ([0, 1, 2, 3, 4, 5, 6] as const);
 
+  // 6週ある月（例: 2031年11月）でも下部の条件・質問欄を圧迫しないようセル高を調整
+  const cellHeightMm = prob.rows.length >= 6 ? 12.5 : 14.5;
+
   const headerCells = weekdays
     .map((wd) => {
       let color = '#222';
       if (wd === 0) color = '#c00'; // 日曜
       if (wd === 6) color = '#0066cc'; // 土曜
-      return `<th style="border: 1px solid #444; background: #f0f0f0; color: ${color}; text-align: center; padding: 3px 0; font-size: 10pt; width: 14.28%;">${WEEKDAY_LABELS[wd]}</th>`;
+      return `<th style="border: 1px solid #333; background: #ebebeb; color: ${color}; text-align: center; padding: 3px 0; font-size: 10pt; width: 14.28%;">${WEEKDAY_LABELS[wd]}</th>`;
     })
     .join('');
 
@@ -158,7 +161,8 @@ function buildCalendarTable(
     const cells = row
       .map((cell) => {
         if (cell.day === 0) {
-          return `<td style="border: 1px solid #ccc; background: #fafafa; height: 14.5mm;"></td>`;
+          // 隣接する日付セルの上辺・左辺や表外枠の線が border-collapse で薄くならないよう、枠線色は #333 に統一する
+          return `<td style="border: 1px solid #333; background: #f3f3f3; height: ${cellHeightMm}mm;"></td>`;
         }
         let dayColor = '#222';
         if (cell.weekday === 0) dayColor = '#c00';
@@ -178,8 +182,8 @@ function buildCalendarTable(
         }
 
         return `
-<td style="border: 1px solid #444; height: 14.5mm; vertical-align: top; padding: 2px; box-sizing: border-box;">
-  <div style="font-weight: bold; font-size: 9pt; color: ${dayColor}; line-height: 1;">${cell.day}</div>
+<td style="border: 1px solid #333; background: #fff; height: ${cellHeightMm}mm; vertical-align: top; padding: 2px 3px; text-align: left; box-sizing: border-box;">
+  <div style="font-weight: bold; font-size: 9pt; color: ${dayColor}; line-height: 1.1; text-align: center;">${cell.day}</div>
   <div style="margin-top: 1px; display: flex; flex-direction: column; gap: 1px;">
     ${eventsHtml}
   </div>
@@ -192,7 +196,7 @@ function buildCalendarTable(
   }).join('');
 
   return `
-<table style="width: 100%; border-collapse: collapse; table-layout: fixed;">
+<table style="width: 100%; border-collapse: collapse; table-layout: fixed; border: 1.5px solid #222;">
   <thead><tr>${headerCells}</tr></thead>
   <tbody>${rowHtmls}</tbody>
 </table>
@@ -410,8 +414,8 @@ function buildBlankTimetableGrid(
 
     rows.push(`
 <tr style="height: 6mm;">
-  <td style="border-top: ${borderTop}; border-right: 1px solid #444; border-bottom: 1px solid #eee; width: 45px; text-align: right; padding-right: 6px; font-size: 8pt; color: ${isHour ? '#000' : '#666'}; font-weight: ${isHour ? 'bold' : 'normal'}; background: #fafafa;">${timeStr}</td>
-  <td style="border-top: ${borderTop}; border-bottom: 1px solid #eee; padding: 0 4px;">&nbsp;</td>
+  <td style="border-top: ${borderTop}; border-left: none; border-right: 1px solid #444; border-bottom: 1px solid #eee; width: 45px; text-align: right; padding: 0 6px 0 2px; font-size: 8pt; color: ${isHour ? '#000' : '#666'}; font-weight: ${isHour ? 'bold' : 'normal'}; background: #fafafa;">${timeStr}</td>
+  <td style="border-top: ${borderTop}; border-left: 1px solid #444; border-right: none; border-bottom: 1px solid #eee; padding: 0 4px; text-align: left;">&nbsp;</td>
 </tr>
     `.trim());
   }
@@ -421,8 +425,8 @@ function buildBlankTimetableGrid(
   <table style="width: 100%; border-collapse: collapse; table-layout: fixed;">
     <thead>
       <tr style="background: #e8e8e8; border-bottom: 1px solid #444;">
-        <th style="width: 45px; padding: 3px 0; font-size: 8.5pt; text-align: center;">時刻</th>
-        <th style="padding: 3px 0; font-size: 8.5pt; text-align: center;">予定（用事・移動など）</th>
+        <th style="border: none; border-right: 1px solid #444; border-bottom: 1px solid #444; width: 45px; padding: 3px 0; font-size: 8.5pt; text-align: center;">時刻</th>
+        <th style="border: none; border-bottom: 1px solid #444; padding: 3px 0; font-size: 8.5pt; text-align: center;">予定（用事・移動など）</th>
       </tr>
     </thead>
     <tbody>${rows.join('')}</tbody>
@@ -477,8 +481,8 @@ function buildSolvedTimetableGrid(
 
     rows.push(`
 <tr style="height: 6mm; background: ${cellBg};">
-  <td style="border-top: ${borderTop}; border-right: 1px solid #444; border-bottom: 1px solid #eee; width: 45px; text-align: right; padding-right: 6px; font-size: 8pt; color: ${isHour ? '#000' : '#666'}; font-weight: ${isHour ? 'bold' : 'normal'}; background: #fafafa;">${timeStr}</td>
-  <td style="border-top: ${borderTop}; border-bottom: 1px solid #eee; padding: 0 4px;">${cellContent}</td>
+  <td style="border-top: ${borderTop}; border-left: none; border-right: 1px solid #444; border-bottom: 1px solid #eee; width: 45px; text-align: right; padding: 0 6px 0 2px; font-size: 8pt; color: ${isHour ? '#000' : '#666'}; font-weight: ${isHour ? 'bold' : 'normal'}; background: #fafafa;">${timeStr}</td>
+  <td style="border-top: ${borderTop}; border-left: 1px solid #444; border-right: none; border-bottom: 1px solid #eee; padding: 0 4px; text-align: left;">${cellContent}</td>
 </tr>
     `.trim());
   }
@@ -488,8 +492,8 @@ function buildSolvedTimetableGrid(
   <table style="width: 100%; border-collapse: collapse; table-layout: fixed;">
     <thead>
       <tr style="background: #e8e8e8; border-bottom: 1px solid #444;">
-        <th style="width: 45px; padding: 3px 0; font-size: 8.5pt; text-align: center;">時刻</th>
-        <th style="padding: 3px 0; font-size: 8.5pt; text-align: center;">予定</th>
+        <th style="border: none; border-right: 1px solid #444; border-bottom: 1px solid #444; width: 45px; padding: 3px 0; font-size: 8.5pt; text-align: center;">時刻</th>
+        <th style="border: none; border-bottom: 1px solid #444; padding: 3px 0; font-size: 8.5pt; text-align: center;">予定</th>
       </tr>
     </thead>
     <tbody>${rows.join('')}</tbody>
