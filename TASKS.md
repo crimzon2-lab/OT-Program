@@ -469,7 +469,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit && npx vitest run src/modules/attention/m02-tmt/logic.test.ts`
 
-### - [ ] Task 28: モジュール3（符号変換課題・SDMT様）生成ロジック（`logic.ts`）の実装
+### - [x] Task 28: モジュール3（符号変換課題・SDMT様）生成ロジック（`logic.ts`）の実装
 - **対象ファイルパス**:
   - `src/modules/attention/m03-symbol-digit/logic.ts`（新規）
 - **参照する型・仕様**:
@@ -483,7 +483,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit`
 
-### - [ ] Task 29: モジュール3（符号変換課題・SDMT様）SVG 描画とモジュール定義の実装
+### - [x] Task 29: モジュール3（符号変換課題・SDMT様）SVG 描画とモジュール定義の実装
 - **対象ファイルパス**:
   - `src/modules/attention/m03-symbol-digit/render.ts`（新規）
   - `src/modules/attention/m03-symbol-digit/index.ts`（新規）
@@ -500,7 +500,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit`
 
-### - [ ] Task 30: モジュール3（符号変換課題・SDMT様）単体テストの実装
+### - [x] Task 30: モジュール3（符号変換課題・SDMT様）単体テストの実装
 - **対象ファイルパス**:
   - `src/modules/attention/m03-symbol-digit/logic.test.ts`（新規）
 - **参照する型・仕様**:
