@@ -961,7 +961,7 @@
 
 ## Phase 4：E. 遂行機能・IADL 領域マスターデータ＆モジュール 9〜12（Task 57 〜 Task 74）
 
-### - [ ] Task 57: モジュール9（迷路・ルート探索）反復型迷路生成・BFS最短路探索ロジック（`logic.ts`）の実装
+### - [x] Task 57: モジュール9（迷路・ルート探索）反復型迷路生成・BFS最短路探索ロジック（`logic.ts`）の実装
 - **対象ファイルパス**:
   - `src/modules/iadl/m09-maze/logic.ts`（新規）
 - **参照する型・仕様**:
@@ -978,7 +978,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit`
 
-### - [ ] Task 58: モジュール9（迷路・ルート探索）SVG 描画とモジュール定義の実装
+### - [x] Task 58: モジュール9（迷路・ルート探索）SVG 描画とモジュール定義の実装
 - **対象ファイルパス**:
   - `src/modules/iadl/m09-maze/render.ts`（新規）
   - `src/modules/iadl/m09-maze/index.ts`（新規）
@@ -995,7 +995,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit`
 
-### - [ ] Task 59: モジュール9（迷路・ルート探索）単体テストの実装
+### - [x] Task 59: モジュール9（迷路・ルート探索）単体テストの実装
 - **対象ファイルパス**:
   - `src/modules/iadl/m09-maze/logic.test.ts`（新規）
 - **参照する型・仕様**:
@@ -1008,7 +1008,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit && npx vitest run src/modules/iadl/m09-maze/logic.test.ts`
 
-### - [ ] Task 60: 買い物商品マスターデータ（`src/data/shop-items.ts`：72品目以上）と整合性テストの作成
+### - [x] Task 60: 買い物商品マスターデータ（`src/data/shop-items.ts`：72品目以上）と整合性テストの作成
 - **対象ファイルパス**:
   - `src/data/shop-items.ts`（新規）
   - `src/data/shop-items.test.ts`（新規）
@@ -1022,7 +1022,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit && npx vitest run src/data/shop-items.test.ts`
 
-### - [ ] Task 61: モジュール10 硬貨・紙幣の白黒ハイコントラスト模式図 SVG ビルダ（`coins.ts`）の実装
+### - [x] Task 61: モジュール10 硬貨・紙幣の白黒ハイコントラスト模式図 SVG ビルダ（`coins.ts`）の実装
 - **対象ファイルパス**:
   - `src/modules/iadl/m10-money/coins.ts`（新規）
   - `src/modules/iadl/m10-money/coins.test.ts`（新規）
@@ -1046,7 +1046,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit && npx vitest run src/modules/iadl/m10-money/coins.test.ts`
 
-### - [ ] Task 62: モジュール10 サブモードA（硬貨・紙幣の合計と支払い選択 `money.ts`：逆算一意解保証つき）の実装
+### - [x] Task 62: モジュール10 サブモードA（硬貨・紙幣の合計と支払い選択 `money.ts`：逆算一意解保証つき）の実装
 - **対象ファイルパス**:
   - `src/modules/iadl/m10-money/money.ts`（新規）
 - **参照する型・仕様**:
@@ -1066,7 +1066,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit`
 
-### - [ ] Task 63: モジュール10 サブモードB（買い物リストと予算・割引・お釣り計算 `shopping.ts`）の実装
+### - [x] Task 63: モジュール10 サブモードB（買い物リストと予算・割引・お釣り計算 `shopping.ts`）の実装
 - **対象ファイルパス**:
   - `src/modules/iadl/m10-money/shopping.ts`（新規）
 - **参照する型・仕様**:
@@ -1085,7 +1085,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit`
 
-### - [ ] Task 64: モジュール10 描画（`render.ts`）とモジュール定義（`index.ts`）の実装
+### - [x] Task 64: モジュール10 描画（`render.ts`）とモジュール定義（`index.ts`）の実装
 - **対象ファイルパス**:
   - `src/modules/iadl/m10-money/render.ts`（新規）
   - `src/modules/iadl/m10-money/index.ts`（新規）
@@ -1103,7 +1103,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit`
 
-### - [ ] Task 65: モジュール10（金銭管理・買い物計算）単体テストの実装
+### - [x] Task 65: モジュール10（金銭管理・買い物計算）単体テストの実装
 - **対象ファイルパス**:
   - `src/modules/iadl/m10-money/logic.test.ts`（新規）
 - **参照する型・仕様**:
