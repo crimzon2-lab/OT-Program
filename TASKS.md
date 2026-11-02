@@ -510,7 +510,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit && npx vitest run src/modules/attention/m03-symbol-digit/logic.test.ts`
 
-### - [ ] Task 31: 読解コーパスデータ作成（1/3）：季節の話題（`season` 3編）・生活の知恵（`lifeTips` 3編）計6編
+### - [x] Task 31: 読解コーパスデータ作成（1/3）：季節の話題（`season` 3編）・生活の知恵（`lifeTips` 3編）計6編
 - **対象ファイルパス**:
   - `src/data/passages/passages-1.ts`（新規）
 - **参照する型・仕様**:
@@ -524,7 +524,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit`
 
-### - [ ] Task 32: 読解コーパスデータ作成（2/3）：日常エピソード（`episode` 3編）・食と料理（`food` 3編）計6編
+### - [x] Task 32: 読解コーパスデータ作成（2/3）：日常エピソード（`episode` 3編）・食と料理（`food` 3編）計6編
 - **対象ファイルパス**:
   - `src/data/passages/passages-2.ts`（新規）
 - **参照する型・仕様**:
@@ -536,7 +536,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit`
 
-### - [ ] Task 33: 読解コーパスデータ作成（3/3）：健康と運動（`health` 3編）・地域の暮らし（`local` 3編）計6編と全18編統合テスト
+### - [x] Task 33: 読解コーパスデータ作成（3/3）：健康と運動（`health` 3編）・地域の暮らし（`local` 3編）計6編と全18編統合テスト
 - **対象ファイルパス**:
   - `src/data/passages/passages-3.ts`（新規）
   - `src/data/passages/index.ts`（新規）
