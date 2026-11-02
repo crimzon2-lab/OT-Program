@@ -52,8 +52,8 @@ describe('src/core/testing.ts and registry.ts', () => {
 
   describe('registry', () => {
     const dummyModule: AnyTaskModule = {
-      id: 'M05',
-      domain: 'visuospatial',
+      id: 'M12',
+      domain: 'iadl',
       title: 'ダミー課題',
       shortTitle: 'ダミー',
       description: 'テスト説明',
@@ -72,22 +72,22 @@ describe('src/core/testing.ts and registry.ts', () => {
     });
 
     it('allows registering and getting test modules, and cleans up with unregister / reset', () => {
-      expect(getModule('M05')).toBeUndefined();
+      expect(getModule('M12')).toBeUndefined();
 
       const unregister = registerModuleForTest(dummyModule);
-      expect(getModule('M05')).toBe(dummyModule);
-      expect(getModulesByDomain('visuospatial')).toContain(dummyModule);
+      expect(getModule('M12')).toBe(dummyModule);
+      expect(getModulesByDomain('iadl')).toContain(dummyModule);
 
       // Call unregister
       unregister();
-      expect(getModule('M05')).toBeUndefined();
+      expect(getModule('M12')).toBeUndefined();
     });
 
     it('cleans up via resetRegistryForTest', () => {
       registerModuleForTest(dummyModule);
-      expect(getModule('M05')).toBe(dummyModule);
+      expect(getModule('M12')).toBe(dummyModule);
       resetRegistryForTest();
-      expect(getModule('M05')).toBeUndefined();
+      expect(getModule('M12')).toBeUndefined();
     });
   });
 });

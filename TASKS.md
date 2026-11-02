@@ -630,7 +630,7 @@
 
 ## Phase 2：B. 視空間認知・USN 領域 ＆ C. ワーキングメモリ領域（モジュール 5〜7）（Task 38 〜 Task 46）
 
-### - [ ] Task 38: モジュール5（線分抹消・線分二等分）生成ロジック（`logic.ts`）の実装
+### - [x] Task 38: モジュール5（線分抹消・線分二等分）生成ロジック（`logic.ts`）の実装
 - **対象ファイルパス**:
   - `src/modules/visuospatial/m05-lines/logic.ts`（新規）
 - **参照する型・仕様**:
@@ -648,7 +648,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit`
 
-### - [ ] Task 39: モジュール5（線分抹消・線分二等分）SVG 描画とモジュール定義の実装
+### - [x] Task 39: モジュール5（線分抹消・線分二等分）SVG 描画とモジュール定義の実装
 - **対象ファイルパス**:
   - `src/modules/visuospatial/m05-lines/render.ts`（新規）
   - `src/modules/visuospatial/m05-lines/index.ts`（新規）
@@ -664,7 +664,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit`
 
-### - [ ] Task 40: モジュール5（線分抹消・線分二等分）単体テストの実装
+### - [x] Task 40: モジュール5（線分抹消・線分二等分）単体テストの実装
 - **対象ファイルパス**:
   - `src/modules/visuospatial/m05-lines/logic.test.ts`（新規）
 - **参照する型・仕様**:
@@ -675,7 +675,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit && npx vitest run src/modules/visuospatial/m05-lines/logic.test.ts`
 
-### - [ ] Task 41: モジュール6（点つなぎ図形模写・空間記憶マトリクス）生成ロジック（`logic.ts`）の実装
+### - [x] Task 41: モジュール6（点つなぎ図形模写・空間記憶マトリクス）生成ロジック（`logic.ts`）の実装
 - **対象ファイルパス**:
   - `src/modules/visuospatial/m06-dots-matrix/logic.ts`（新規）
 - **参照する型・仕様**:
@@ -692,7 +692,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit`
 
-### - [ ] Task 42: モジュール6（点つなぎ図形模写・空間記憶マトリクス）SVG 描画とモジュール定義の実装
+### - [x] Task 42: モジュール6（点つなぎ図形模写・空間記憶マトリクス）SVG 描画とモジュール定義の実装
 - **対象ファイルパス**:
   - `src/modules/visuospatial/m06-dots-matrix/render.ts`（新規）
   - `src/modules/visuospatial/m06-dots-matrix/index.ts`（新規）
@@ -713,7 +713,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit`
 
-### - [ ] Task 43: モジュール6（点つなぎ図形模写・空間記憶マトリクス）単体テストの実装
+### - [x] Task 43: モジュール6（点つなぎ図形模写・空間記憶マトリクス）単体テストの実装
 - **対象ファイルパス**:
   - `src/modules/visuospatial/m06-dots-matrix/logic.test.ts`（新規）
 - **参照する型・仕様**:
@@ -724,7 +724,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit && npx vitest run src/modules/visuospatial/m06-dots-matrix/logic.test.ts`
 
-### - [ ] Task 44: モジュール7（連続計算・紙面N-back）生成ロジック（`logic.ts`）の実装
+### - [x] Task 44: モジュール7（連続計算・紙面N-back）生成ロジック（`logic.ts`）の実装
 - **対象ファイルパス**:
   - `src/modules/memory/m07-serial-nback/logic.ts`（新規）
 - **参照する型・仕様**:
@@ -742,7 +742,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit`
 
-### - [ ] Task 45: モジュール7（連続計算・紙面N-back）SVG 描画とモジュール定義の実装
+### - [x] Task 45: モジュール7（連続計算・紙面N-back）SVG 描画とモジュール定義の実装
 - **対象ファイルパス**:
   - `src/modules/memory/m07-serial-nback/render.ts`（新規）
   - `src/modules/memory/m07-serial-nback/index.ts`（新規）
@@ -758,7 +758,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit`
 
-### - [ ] Task 46: モジュール7 単体テストと B・C 領域（M05〜M07）レジストリ統合
+### - [x] Task 46: モジュール7 単体テストと B・C 領域（M05〜M07）レジストリ統合
 - **対象ファイルパス**:
   - `src/modules/memory/m07-serial-nback/logic.test.ts`（新規）
   - `src/core/registry.ts`（編集）
