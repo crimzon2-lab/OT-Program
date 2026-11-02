@@ -1115,7 +1115,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit && npx vitest run src/modules/iadl/m10-money/logic.test.ts`
 
-### - [ ] Task 66: スケジュール用マスターデータ（用事テンプレート30件以上・順序ペア12件以上 `errands.ts`）の作成
+### - [x] Task 66: スケジュール用マスターデータ（用事テンプレート30件以上・順序ペア12件以上 `errands.ts`）の作成
 - **対象ファイルパス**:
   - `src/data/schedule/errands.ts`（新規）
 - **参照する型・仕様**:
@@ -1128,7 +1128,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit`
 
-### - [ ] Task 67: カレンダー予定テンプレート（20件以上 `calendar-events.ts`）とスケジュールデータ整合性テストの作成
+### - [x] Task 67: カレンダー予定テンプレート（20件以上 `calendar-events.ts`）とスケジュールデータ整合性テストの作成
 - **対象ファイルパス**:
   - `src/data/schedule/calendar-events.ts`（新規）
   - `src/data/schedule/schedule.test.ts`（新規）
@@ -1144,7 +1144,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit && npx vitest run src/data/schedule/schedule.test.ts`
 
-### - [ ] Task 68: モジュール11 サブモードA（月間カレンダーの読み取り・予定記入・質問逆算生成 `calendar.ts`）の実装
+### - [x] Task 68: モジュール11 サブモードA（月間カレンダーの読み取り・予定記入・質問逆算生成 `calendar.ts`）の実装
 - **対象ファイルパス**:
   - `src/modules/iadl/m11-schedule/calendar.ts`（新規）
   - `src/modules/iadl/m11-schedule/calendar.test.ts`（新規）
@@ -1165,7 +1165,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit && npx vitest run src/modules/iadl/m11-schedule/calendar.test.ts`
 
-### - [ ] Task 69: モジュール11 サブモードB タイムスケジュール制約検証ソルバ（`solver.ts`）の実装
+### - [x] Task 69: モジュール11 サブモードB タイムスケジュール制約検証ソルバ（`solver.ts`）の実装
 - **対象ファイルパス**:
   - `src/modules/iadl/m11-schedule/solver.ts`（新規）
 - **参照する型・仕様**:
@@ -1180,7 +1180,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit`
 
-### - [ ] Task 70: モジュール11 サブモードB 逆算タイムスケジュール生成（`timetable.ts`）と単体テストの実装
+### - [x] Task 70: モジュール11 サブモードB 逆算タイムスケジュール生成（`timetable.ts`）と単体テストの実装
 - **対象ファイルパス**:
   - `src/modules/iadl/m11-schedule/timetable.ts`（新規）
   - `src/modules/iadl/m11-schedule/timetable.test.ts`（新規）
@@ -1199,7 +1199,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit && npx vitest run src/modules/iadl/m11-schedule/timetable.test.ts`
 
-### - [ ] Task 71: モジュール11（スケジュール調整・カレンダー）描画（`render.ts`）とモジュール定義（`index.ts`）の実装
+### - [x] Task 71: モジュール11（スケジュール調整・カレンダー）描画（`render.ts`）とモジュール定義（`index.ts`）の実装
 - **対象ファイルパス**:
   - `src/modules/iadl/m11-schedule/render.ts`（新規）
   - `src/modules/iadl/m11-schedule/index.ts`（新規）
@@ -1214,7 +1214,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit`
 
-### - [ ] Task 72: 服薬管理マスターデータ（架空薬剤24種以上 `src/data/medicines.ts`）と整合性テストの作成
+### - [x] Task 72: 服薬管理マスターデータ（架空薬剤24種以上 `src/data/medicines.ts`）と整合性テストの作成
 - **対象ファイルパス**:
   - `src/data/medicines.ts`（新規）
   - `src/data/medicines.test.ts`（新規）
@@ -1229,7 +1229,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit && npx vitest run src/data/medicines.test.ts`
 
-### - [ ] Task 73: モジュール12（服薬管理・残薬計算）生成ロジック（`logic.ts`）と描画（`render.ts`）の実装
+### - [x] Task 73: モジュール12（服薬管理・残薬計算）生成ロジック（`logic.ts`）と描画（`render.ts`）の実装
 - **対象ファイルパス**:
   - `src/modules/iadl/m12-medication/logic.ts`（新規）
   - `src/modules/iadl/m12-medication/render.ts`（新規）
@@ -1255,7 +1255,7 @@
 - **完了確認コマンド**:
   - `npx tsc --noEmit`
 
-### - [ ] Task 74: モジュール12 モジュール定義・単体テストおよび全12モジュールレジストリ完成
+### - [x] Task 74: モジュール12 モジュール定義・単体テストおよび全12モジュールレジストリ完成
 - **対象ファイルパス**:
   - `src/modules/iadl/m12-medication/index.ts`（新規）
   - `src/modules/iadl/m12-medication/logic.test.ts`（新規）

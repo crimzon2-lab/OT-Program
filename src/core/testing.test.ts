@@ -62,32 +62,37 @@ describe('src/core/testing.ts and registry.ts', () => {
       generate: () => ({ pages: [] }),
     };
 
-    it('contains Phase 1 modules in ALL_MODULES', () => {
-      expect(ALL_MODULES.length).toBeGreaterThanOrEqual(4);
+    it('contains all 12 modules in ALL_MODULES', () => {
+      expect(ALL_MODULES.length).toBe(12);
       expect(getModule('M01')?.title).toBe('抹消課題');
       expect(getModule('M02')?.title).toBe('TMT様課題');
       expect(getModule('M03')?.title).toBe('符号変換課題');
       expect(getModule('M04')?.title).toBe('仮名拾い課題');
-      expect(getModulesByDomain('attention').length).toBeGreaterThanOrEqual(4);
+      expect(getModule('M11')?.title).toBe('スケジュール・カレンダー');
+      expect(getModule('M12')?.title).toBe('服薬管理・残薬計算');
+      expect(getModulesByDomain('attention').length).toBe(4);
+      expect(getModulesByDomain('iadl').length).toBe(4);
     });
 
     it('allows registering and getting test modules, and cleans up with unregister / reset', () => {
-      expect(getModule('M12')).toBeUndefined();
+      const originalM12 = getModule('M12');
+      expect(originalM12).toBeDefined();
+      expect(originalM12).not.toBe(dummyModule);
 
       const unregister = registerModuleForTest(dummyModule);
       expect(getModule('M12')).toBe(dummyModule);
-      expect(getModulesByDomain('iadl')).toContain(dummyModule);
 
       // Call unregister
       unregister();
-      expect(getModule('M12')).toBeUndefined();
+      expect(getModule('M12')).toBe(originalM12);
     });
 
     it('cleans up via resetRegistryForTest', () => {
+      const originalM12 = getModule('M12');
       registerModuleForTest(dummyModule);
       expect(getModule('M12')).toBe(dummyModule);
       resetRegistryForTest();
-      expect(getModule('M12')).toBeUndefined();
+      expect(getModule('M12')).toBe(originalM12);
     });
   });
 });

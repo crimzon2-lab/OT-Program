@@ -7,6 +7,10 @@ import { m01Module } from '../modules/attention/m01-cancellation';
 import { m02Module } from '../modules/attention/m02-tmt';
 import { m03Module } from '../modules/attention/m03-symbol-digit';
 import { m04Module } from '../modules/attention/m04-kana-pickup';
+import { m09Module } from '../modules/iadl/m09-maze';
+import { m10Module } from '../modules/iadl/m10-money';
+import { m11Module } from '../modules/iadl/m11-schedule';
+import { m12Module } from '../modules/iadl/m12-medication';
 import { m08Module } from '../modules/language/m08-lexical';
 import { m07Module } from '../modules/memory/m07-serial-nback';
 import { m05Module } from '../modules/visuospatial/m05-lines';
@@ -14,7 +18,8 @@ import { m06Module } from '../modules/visuospatial/m06-dots-matrix';
 import type { AnyTaskModule, DomainId, ModuleId } from '../types/schema';
 
 /**
- * 本番用全モジュール一覧（Phase 1〜4 で順次登録される）
+ * 本番用全モジュール一覧（全12モジュール）
+ * MODULE_IDS 順（M01〜M12）で整列
  */
 export const ALL_MODULES: readonly AnyTaskModule[] = [
   m01Module,
@@ -25,6 +30,10 @@ export const ALL_MODULES: readonly AnyTaskModule[] = [
   m06Module,
   m07Module,
   m08Module,
+  m09Module,
+  m10Module,
+  m11Module,
+  m12Module,
 ];
 
 const testModules = new Map<ModuleId, AnyTaskModule>();
@@ -61,7 +70,7 @@ export function registerModuleForTest(module: AnyTaskModule): () => void {
 }
 
 /**
- * テスト登録されたモックモジュールをすべて解除する（テスト間汚染防止）
+ * テスト用モック登録をすべてクリアする（afterEach で使用）
  */
 export function resetRegistryForTest(): void {
   testModules.clear();
