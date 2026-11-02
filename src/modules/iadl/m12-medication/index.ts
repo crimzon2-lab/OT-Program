@@ -34,7 +34,7 @@ export const m12ParamSchema: ParamSchema<M12Params> = [
     default: 'letterEffect',
     options: [
       { value: 'letterEffect', label: '記号＋効能（A錠：血圧の薬）' },
-      { value: 'fictionalEffect', label: '架空名＋効能（ケツアール錠：血圧の薬）' },
+      { value: 'fictionalEffect', label: '薬品名（一般名）＋効能（アムロジピン錠：血圧の薬）' },
       { value: 'letterOnly', label: '記号のみ（A錠）' },
     ],
   },

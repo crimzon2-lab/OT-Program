@@ -131,7 +131,7 @@ function buildExplanationTable(prob: MedicationProblem, _isAnswer: boolean): str
       const timingText = formatTimingLabels(d.timings);
       return `
 <tr>
-  <td style="border: 1px solid #444; padding: 3px 6px; font-weight: bold;">${esc(d.displayName)}</td>
+  <td style="border: 1px solid #444; padding: 3px 6px; font-weight: bold;">${esc(d.shortName)}</td>
   <td style="border: 1px solid #444; padding: 3px 6px; text-align: center;">${esc(d.effect)}</td>
   <td style="border: 1px solid #444; padding: 3px 6px; text-align: center; color: #003399;">${esc(timingText)}</td>
   <td style="border: 1px solid #444; padding: 3px 6px; text-align: center;">1回 ${d.dosePerTime}${esc(d.form)}</td>
@@ -225,7 +225,7 @@ function buildWeeklyOrganizer(prob: MedicationProblem, isAnswer: boolean): strin
           itemText = `<span style="color: #888; font-size: 7.5pt;">なし</span>`;
         } else {
           itemText = items
-            .map((it) => `<div style="color: #900; font-size: 7.5pt; font-weight: bold;">${esc(it.drug.letter)}${esc(it.drug.form)} ${it.dose}</div>`)
+            .map((it) => `<div style="color: #900; font-size: 7pt; font-weight: bold; line-height: 1.15;">${esc(it.drug.shortName)} ${it.dose}</div>`)
             .join('');
         }
       }

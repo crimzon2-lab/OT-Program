@@ -29,9 +29,9 @@ describe('src/data/medicines master data integrity', () => {
       // 「錠」「カプセル」を含まない
       expect(m.fictionalName).not.toContain('錠');
       expect(m.fictionalName).not.toContain('カプセル');
-      // 文字長が4〜7文字
+      // 文字長が4〜9文字
       expect(m.fictionalName.length).toBeGreaterThanOrEqual(4);
-      expect(m.fictionalName.length).toBeLessThanOrEqual(7);
+      expect(m.fictionalName.length).toBeLessThanOrEqual(9);
       // 効能が非空
       expect(m.effect.length).toBeGreaterThan(0);
       // 剤形が '錠' または 'カプセル'

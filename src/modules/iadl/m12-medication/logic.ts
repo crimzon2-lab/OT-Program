@@ -28,6 +28,7 @@ export interface PreparedDrug {
   fictionalName: string;
   effect: string;
   form: '錠' | 'カプセル';
+  shortName: string;
   displayName: string;
   timings: readonly DoseTiming[];
   dosePerTime: number;
@@ -65,10 +66,13 @@ export function generateMedicationProblem(
     const letter = LETTERS[idx] ?? `薬${idx + 1}`;
 
     // 表示名の構築
+    let shortName = `${letter}${tmpl.form}`;
     let displayName = `${letter}${tmpl.form}（${tmpl.effect}）`;
     if (params.labelStyle === 'fictionalEffect') {
+      shortName = `${tmpl.fictionalName}${tmpl.form}`;
       displayName = `${tmpl.fictionalName}${tmpl.form}（${tmpl.effect}）`;
     } else if (params.labelStyle === 'letterOnly') {
+      shortName = `${letter}${tmpl.form}`;
       displayName = `${letter}${tmpl.form}`;
     }
 
@@ -83,6 +87,7 @@ export function generateMedicationProblem(
       fictionalName: tmpl.fictionalName,
       effect: tmpl.effect,
       form: tmpl.form,
+      shortName,
       displayName,
       timings,
       dosePerTime,

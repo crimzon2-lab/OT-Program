@@ -1,7 +1,7 @@
 /**
- * 服薬管理マスターデータ（架空薬剤24種以上・省略なし）
+ * 服薬管理マスターデータ（一般名・成分名ベース 26種・省略なし）
  * ARCHITECTURE.md §5.6, §9.7 準拠
- * ※実在の医薬品名（商品名・一般名）は一切含みません。
+ * ※特定の製薬メーカーの商標（商品名）は使用せず、一般名（薬品名・成分名）を使用します。
  */
 
 import type { MedicineTemplate } from '../types/schema';
@@ -10,7 +10,7 @@ export const MEDICINE_TEMPLATES: readonly MedicineTemplate[] = [
   // --- 循環器系（血圧・血液・コレステロール） ---
   {
     id: 'md-001',
-    fictionalName: 'ケツアール',
+    fictionalName: 'アムロジピン',
     effect: '血圧を下げる薬',
     form: '錠',
     timingPatterns: [
@@ -21,7 +21,7 @@ export const MEDICINE_TEMPLATES: readonly MedicineTemplate[] = [
   },
   {
     id: 'md-002',
-    fictionalName: 'アツサール',
+    fictionalName: 'ニフェジピン',
     effect: '血圧を安定させる薬',
     form: '錠',
     timingPatterns: [
@@ -31,7 +31,7 @@ export const MEDICINE_TEMPLATES: readonly MedicineTemplate[] = [
   },
   {
     id: 'md-003',
-    fictionalName: 'コレスノン',
+    fictionalName: 'プラバスタチン',
     effect: 'コレステロールを下げる薬',
     form: 'カプセル',
     timingPatterns: [
@@ -42,7 +42,7 @@ export const MEDICINE_TEMPLATES: readonly MedicineTemplate[] = [
   },
   {
     id: 'md-004',
-    fictionalName: 'シシスール',
+    fictionalName: 'ベザフィブラート',
     effect: '中性脂肪を下げる薬',
     form: 'カプセル',
     timingPatterns: [
@@ -53,7 +53,7 @@ export const MEDICINE_TEMPLATES: readonly MedicineTemplate[] = [
   },
   {
     id: 'md-005',
-    fictionalName: 'ノウサララ',
+    fictionalName: 'クロピドグレル',
     effect: '血液をサラサラにする薬',
     form: '錠',
     timingPatterns: [
@@ -64,7 +64,7 @@ export const MEDICINE_TEMPLATES: readonly MedicineTemplate[] = [
   },
   {
     id: 'md-006',
-    fictionalName: 'ケッカンノン',
+    fictionalName: 'ジルチアゼム',
     effect: '血管を広げる薬',
     form: '錠',
     timingPatterns: [
@@ -77,7 +77,7 @@ export const MEDICINE_TEMPLATES: readonly MedicineTemplate[] = [
   // --- 代謝・内分泌系（血糖・尿酸） ---
   {
     id: 'md-007',
-    fictionalName: 'トウサール',
+    fictionalName: 'メトホルミン',
     effect: '血糖値を下げる薬',
     form: '錠',
     timingPatterns: [
@@ -88,7 +88,7 @@ export const MEDICINE_TEMPLATES: readonly MedicineTemplate[] = [
   },
   {
     id: 'md-008',
-    fictionalName: 'グルコカット',
+    fictionalName: 'ボグリボース',
     effect: '糖の吸収を抑える薬',
     form: '錠',
     timingPatterns: [
@@ -98,7 +98,7 @@ export const MEDICINE_TEMPLATES: readonly MedicineTemplate[] = [
   },
   {
     id: 'md-009',
-    fictionalName: 'ニョウサンノン',
+    fictionalName: 'アロプリノール',
     effect: '尿酸値を下げる薬',
     form: '錠',
     timingPatterns: [
@@ -110,7 +110,7 @@ export const MEDICINE_TEMPLATES: readonly MedicineTemplate[] = [
   // --- 消化器系（胃腸・便通） ---
   {
     id: 'md-010',
-    fictionalName: 'イマモール',
+    fictionalName: 'レバミピド',
     effect: '胃の粘膜を守る薬',
     form: '錠',
     timingPatterns: [
@@ -121,7 +121,7 @@ export const MEDICINE_TEMPLATES: readonly MedicineTemplate[] = [
   },
   {
     id: 'md-011',
-    fictionalName: 'イベンテン',
+    fictionalName: 'ファモチジン',
     effect: '胃酸を抑える薬',
     form: 'カプセル',
     timingPatterns: [
@@ -132,7 +132,7 @@ export const MEDICINE_TEMPLATES: readonly MedicineTemplate[] = [
   },
   {
     id: 'md-012',
-    fictionalName: 'チョウラック',
+    fictionalName: 'トリメブチン',
     effect: '腸の調子を整える薬',
     form: '錠',
     timingPatterns: [
@@ -142,7 +142,7 @@ export const MEDICINE_TEMPLATES: readonly MedicineTemplate[] = [
   },
   {
     id: 'md-013',
-    fictionalName: 'ベンデルン',
+    fictionalName: 'センノシド',
     effect: 'お通じを良くする薬',
     form: '錠',
     timingPatterns: [
@@ -153,7 +153,7 @@ export const MEDICINE_TEMPLATES: readonly MedicineTemplate[] = [
   },
   {
     id: 'md-014',
-    fictionalName: 'カンゾラック',
+    fictionalName: 'グルタチオン',
     effect: '肝臓の働きを助ける薬',
     form: '錠',
     timingPatterns: [
@@ -165,7 +165,7 @@ export const MEDICINE_TEMPLATES: readonly MedicineTemplate[] = [
   // --- 鎮痛・消炎・筋骨格系 ---
   {
     id: 'md-015',
-    fictionalName: 'イタミノン',
+    fictionalName: 'ロキソプロフェン',
     effect: '痛みを和らげる薬',
     form: '錠',
     timingPatterns: [
@@ -176,7 +176,7 @@ export const MEDICINE_TEMPLATES: readonly MedicineTemplate[] = [
   },
   {
     id: 'md-016',
-    fictionalName: 'ツウラクール',
+    fictionalName: 'セレコキシブ',
     effect: '関節の痛みを抑える薬',
     form: 'カプセル',
     timingPatterns: [
@@ -186,7 +186,7 @@ export const MEDICINE_TEMPLATES: readonly MedicineTemplate[] = [
   },
   {
     id: 'md-017',
-    fictionalName: 'ホネツヨール',
+    fictionalName: 'アレンドロン',
     effect: '骨を丈夫にする薬',
     form: '錠',
     timingPatterns: [
@@ -196,7 +196,7 @@ export const MEDICINE_TEMPLATES: readonly MedicineTemplate[] = [
   },
   {
     id: 'md-018',
-    fictionalName: 'カルシンタ',
+    fictionalName: 'カルシトール',
     effect: 'カルシウムを補う薬',
     form: '錠',
     timingPatterns: [
@@ -206,7 +206,7 @@ export const MEDICINE_TEMPLATES: readonly MedicineTemplate[] = [
   },
   {
     id: 'md-019',
-    fictionalName: 'ハルラキシン',
+    fictionalName: 'エペリゾン',
     effect: '筋肉のこわばりをほぐす薬',
     form: '錠',
     timingPatterns: [
@@ -219,7 +219,7 @@ export const MEDICINE_TEMPLATES: readonly MedicineTemplate[] = [
   // --- 睡眠・中枢・精神系 ---
   {
     id: 'md-020',
-    fictionalName: 'ネムリード',
+    fictionalName: 'ゾルピデム',
     effect: '眠りを助ける薬',
     form: '錠',
     timingPatterns: [
@@ -229,7 +229,7 @@ export const MEDICINE_TEMPLATES: readonly MedicineTemplate[] = [
   },
   {
     id: 'md-021',
-    fictionalName: 'スミンネル',
+    fictionalName: 'ブロチゾラム',
     effect: '寝つきを良くする薬',
     form: '錠',
     timingPatterns: [
@@ -239,7 +239,7 @@ export const MEDICINE_TEMPLATES: readonly MedicineTemplate[] = [
   },
   {
     id: 'md-022',
-    fictionalName: 'アンシノン',
+    fictionalName: 'タンドスピロン',
     effect: '気持ちを落ち着かせる薬',
     form: '錠',
     timingPatterns: [
@@ -252,7 +252,7 @@ export const MEDICINE_TEMPLATES: readonly MedicineTemplate[] = [
   // --- 呼吸器・アレルギー・ビタミン系 ---
   {
     id: 'md-023',
-    fictionalName: 'セキトマール',
+    fictionalName: 'チペピジン',
     effect: '咳を鎮める薬',
     form: '錠',
     timingPatterns: [
@@ -262,7 +262,7 @@ export const MEDICINE_TEMPLATES: readonly MedicineTemplate[] = [
   },
   {
     id: 'md-024',
-    fictionalName: 'キョタンリン',
+    fictionalName: 'カルボシステイン',
     effect: '痰を出しやすくする薬',
     form: 'カプセル',
     timingPatterns: [
@@ -272,7 +272,7 @@ export const MEDICINE_TEMPLATES: readonly MedicineTemplate[] = [
   },
   {
     id: 'md-025',
-    fictionalName: 'ハナスッキリ',
+    fictionalName: 'エピナスチン',
     effect: 'アレルギー性鼻炎を抑える薬',
     form: '錠',
     timingPatterns: [
@@ -283,7 +283,7 @@ export const MEDICINE_TEMPLATES: readonly MedicineTemplate[] = [
   },
   {
     id: 'md-026',
-    fictionalName: 'ビタミナール',
+    fictionalName: 'メコバラミン',
     effect: 'ビタミンを補う薬',
     form: 'カプセル',
     timingPatterns: [
